@@ -34,7 +34,7 @@ for n in range(4):
     objects.append(HWall(space, 900, 5*n))
 
 # add balls
-Nballs = 25
+Nballs = 0
 for i in range(Nballs):
     x, y = 900*i/Nballs, flipy(60)
     objects.append(Ball(space, x, y, 20))
@@ -70,9 +70,9 @@ while running:
         rocky.thrust -= 20
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
-        rocky.thrust_angle -= 0.01
+        rocky.thrust_angle -= 0.1
     if keys_pressed[pygame.K_RIGHT]:
-        rocky.thrust_angle += 0.01
+        rocky.thrust_angle += 0.1
 
 
     # Apply forces
@@ -92,7 +92,8 @@ while running:
     # Display some text
     font = pygame.font.Font(None, 16)
     text = """Thrust: {:f}
-Angle: {:f}°""".format(rocky.thrust, rocky.thrust_angle)
+Angle: {:f}°
+TWR: {:f}""".format(rocky.thrust, rocky.thrust_angle, rocky.twr())
     y = 5
     for line in text.splitlines():
         text = font.render(line, True, pygame.Color("black"))

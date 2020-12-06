@@ -8,6 +8,8 @@ class Rocket(Poly):
         points = [(-w/2, -h/2), (w/2, -h/2),
                   (w/2, h/2), (0, h/1.8), (-w/2, h/2)]
         super().__init__(space, x, y, points, mass)
+        self.space = space
+        self.mass = mass
         self.edgecolor = "red"
 
         self.thrust = 0
@@ -16,8 +18,13 @@ class Rocket(Poly):
 
     def live(self):
         angle = self.thrust_angle / 180. * math.pi
-        thrust_x = self.thrust * math.sin(self.thrust_angle)
-        thrust_y = self.thrust * math.cos(self.thrust_angle)
+        thrust_x = self.thrust * math.sin(angle)
+        thrust_y = self.thrust * math.cos(angle)
         thrust_force = (thrust_x, thrust_y)
         thrust_origin = (0, 0)
         self.body.apply_force_at_local_point(thrust_force, thrust_origin)
+
+
+    # thrust to weight ratio
+    def twr(self):
+        return -self.thrust / self.mass / self.space.gravity[1]
