@@ -12,17 +12,22 @@ class Rocket(Poly):
         self.mass = mass
         self.edgecolor = "red"
 
+        self.w = w
+        self.h = h
+        self.thrust_origin = (0, -h/2)
+
         self.thrust = 0
         self.thrust_angle = 0
         self.body.angle = 0
+        self.ignited = False
 
     def live(self):
         angle = self.thrust_angle / 180. * math.pi
         thrust_x = self.thrust * math.sin(angle)
         thrust_y = self.thrust * math.cos(angle)
         thrust_force = (thrust_x, thrust_y)
-        thrust_origin = (0, 0)
-        self.body.apply_force_at_local_point(thrust_force, thrust_origin)
+        if self.ignited:
+            self.body.apply_force_at_local_point(thrust_force, self.thrust_origin)
 
 
     # thrust to weight ratio

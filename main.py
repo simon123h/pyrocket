@@ -17,14 +17,14 @@ def flipy(y):
 
 
 pygame.init()
-screen = pygame.display.set_mode((900, 600))
+screen = pygame.display.set_mode((1600, 900))
 clock = pygame.time.Clock()
 running = True
 
 # Physics stuff
 space = pymunk.Space()
-space.gravity = 0.0, 0.0
 space.gravity = 0.0, -300.0
+# space.gravity = 0.0, 0.0
 # space.gravity = 0.0, -900.0
 objects = []
 run_physics = True
@@ -44,11 +44,9 @@ for i in range(Nballs):
     x, y = 900*i/Nballs, flipy(30)
     objects.append(Rectangle(space, x, y, 20, 20))
 
-# add the special ball
+# add the rocket
 rocky = Rocket(space, 450, 100)
 objects.append(rocky)
-
-first = True
 
 while running:
     for event in pygame.event.get():
@@ -59,8 +57,10 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x, y = event.pos[X], flipy(event.pos[Y])
             objects.append(Ball(space, x, y))
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
             run_physics = not run_physics
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            rocky.ignited = not rocky.ignited
 
     # handle pressed keys
     keys_pressed = pygame.key.get_pressed()
@@ -70,9 +70,9 @@ while running:
         rocky.thrust -= 20
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
-        rocky.thrust_angle -= 0.1
-    if keys_pressed[pygame.K_RIGHT]:
         rocky.thrust_angle += 0.1
+    if keys_pressed[pygame.K_RIGHT]:
+        rocky.thrust_angle -= 0.1
 
 
     # Apply forces
