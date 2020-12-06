@@ -67,10 +67,12 @@ while running:
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_0:
             rocky.sas_mode = "OFF"
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-            rocky.sas_mode = "stability_assist"
+            rocky.sas_mode = "assist"
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-            rocky.sas_mode = "hover"
+            rocky.sas_mode = "stabilize"
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+            rocky.sas_mode = "hover"
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
             rocky.sas_mode = "land"
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             objects.remove(rocky)

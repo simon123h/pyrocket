@@ -45,12 +45,12 @@ class Rocket(Poly):
         sas_aggr = dt * 120.
         if self.sas_mode == "OFF":
             pass
-        if self.sas_mode  == "stability_assist":
+        if self.sas_mode == "assist":
             # control thrust angle
             self.thrust_angle -= angular_velocity*0.02
             self.thrust_angle = min(self.thrust_angle, math.pi/4)
             self.thrust_angle = max(self.thrust_angle, -math.pi/4)
-        if self.sas_mode in ["hover",  "land"]:
+        if self.sas_mode in ["hover",  "land", "stabilize"]:
             # control thrust angle
             self.thrust_angle = 0
             self.thrust_angle -= abs(velocity.x)*angle*0.2 * sas_aggr
@@ -59,16 +59,19 @@ class Rocket(Poly):
             self.thrust_angle = min(self.thrust_angle, math.pi/4)
             self.thrust_angle = max(self.thrust_angle, -math.pi/4)
             # control absolute thrust
-            self.thrust = self.mass * abs(self.space.gravity[1])
-            self.thrust -= self.mass * velocity.y * sas_aggr
-            self.thrust = max(self.thrust, 0)
-            self.thrust /= max(abs(math.cos(self.thrust_angle -
-                                            self.body.angle)), 0.7)
+            if self.sas_mode in ["hover", "land"]:
+                self.thrust = self.mass * abs(self.space.gravity[1])
+                if self.sas_mode == "hover":
+                    self.thrust -= self.mass * velocity.y * sas_aggr
+                self.thrust = max(self.thrust, 0)
+                self.thrust /= max(abs(math.cos(self.thrust_angle -
+                                                self.body.angle)), 0.7)
         if self.sas_mode == "land":
-            if velocity.y > 10:
+            critical_velocity = 10
+            if velocity.y > critical_velocity:
                 factor = 0
-            elif velocity.y < -10:
-                factor = self.h / self.body.position.y
+            elif velocity.y < -critical_velocity:
+                factor = self.h / self.body.position.y * abs(velocity.y) / critical_velocity * 0.95
             else:
                 factor = 0.5
             if position.y < self.h / 1.6:

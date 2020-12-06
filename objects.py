@@ -8,7 +8,7 @@ def flipy(y):
     if TRACK_TARGET is None:
         return -y + 900
     else:
-        return -y + 700 + TRACK_TARGET.body.position.y
+        return -y + 500 + TRACK_TARGET.body.position.y
 
 def track(target):
     global TRACK_TARGET
