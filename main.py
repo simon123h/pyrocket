@@ -113,7 +113,8 @@ while running:
     text = """Thrust: {:f}
 Angle: {:f}°
 TWR: {:f}
-SAS: {:s}""".format(rocky.thrust, rocky.thrust_angle / 180. * math.pi, rocky.twr(), rocky.sas_mode)
+SAS: {:s} (press 0-9 to switch)
+""".format(rocky.thrust, rocky.thrust_angle / 180. * math.pi, rocky.twr(), rocky.sas_mode)
     y = 5
     for line in text.splitlines():
         text = font.render(line, True, pygame.Color("black"))

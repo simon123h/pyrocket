@@ -70,7 +70,9 @@ class Rocket(Poly):
             elif velocity.y < -10:
                 factor = self.h / self.body.position.y
             else:
-                factor = 0
+                factor = 0.5
+            if position.y < self.h / 1.6:
+                self.ignited = False
             self.thrust *= factor
             # factor = self.mass * (1 - 1.5 * self.body.position.y / self.h) * sas_aggr
             # self.thrust *= math.exp(-0.5 * (self.body.position.y - self.h/5) / self.h)
