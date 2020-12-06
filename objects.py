@@ -8,18 +8,28 @@ def flipy(y):
     return -y + 600
 
 
-class Ball():
+class Object():
 
-    def __init__(self, space, x, y):
-        mass = 10
-        moment = 10
+    def __init__(self):
+        self.body = None
+        self.shape = None
+        self.facecolor = "red"
+        self.edgecolor = "blue"
+
+    def draw(self, screen):
+        pass
+
+
+class Ball(Object):
+
+    def __init__(self, space, x, y, radius=10, mass=10):
+        super().__init__()
+        moment = mass
         self.body = pymunk.Body(mass, moment)
         self.body.position = x, y
-        self.shape = pymunk.Circle(self.body, 10, (0, 0))
-        self.shape.friction = 0.4
+        self.shape = pymunk.Circle(self.body, radius, (0, 0))
+        self.shape.friction = 0.5
         space.add(self.body, self.shape)
-        self.color = "blue"
-        self.linecolor = "red"
 
     def draw(self, screen):
         r = self.shape.radius
@@ -28,13 +38,14 @@ class Ball():
         p = int(v[0]), int(flipy(v[1]))
         p2 = p + Vec2d(rot.x, -rot.y) * r * 0.9
         p2 = int(p2.x), int(p2.y)
-        pygame.draw.circle(screen, pygame.Color(self.color), p, int(r), 2)
-        pygame.draw.line(screen, pygame.Color(self.linecolor), p, p2)
+        pygame.draw.circle(screen, pygame.Color(self.edgecolor), p, int(r), 2)
+        pygame.draw.line(screen, pygame.Color(self.facecolor), p, p2)
 
 
-class Line():
+class Wall(Object):
 
     def __init__(self, space, p1, p2):
+        super().__init__()
         self.shape = pymunk.Segment(space.static_body, p1, p2, 0.0)
         self.shape.friction = 0.99
         space.add(self.shape)
@@ -49,9 +60,35 @@ class Line():
             "lightgray"), False, [p1, p2])
 
 
-class VLine(Line):
+class HWall(Wall):
 
     def __init__(self, space, L, y):
-        p1 = Vec2d(0, y)
-        p2 = Vec2d(L, y)
-        super().__init__(space, p1, p2)
+        super().__init__(space, Vec2d(0, y), Vec2d(L, y))
+
+
+class Poly(Object):
+
+    def __init__(self, space, x, y, points, mass=10):
+        super().__init__()
+        moment = pymunk.moment_for_poly(mass, points)
+        self.body = pymunk.Body(mass, moment)
+        self.body.position = x, y
+        self.shape = pymunk.Poly(self.body, points)
+        self.shape.friction = 0.5
+        space.add(self.body, self.shape)
+
+    def draw(self, screen):
+        ps = [p.rotated(self.body.angle) +
+              self.body.position for p in self.shape.get_vertices()]
+        ps.append(ps[0])
+        for i, p in enumerate(ps):
+            ps[i] = int(p.x), int(flipy(p.y))
+        pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, ps)
+
+
+class Rectangle(Poly):
+
+    def __init__(self, space, x, y, w, h, mass=10):
+        points = [(-w/2, -h/2), (w/2, -h/2), (w/2, h/2), (-w/2, h/2)]
+        super().__init__(space, x, y, points, mass)
+

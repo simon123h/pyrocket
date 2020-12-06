@@ -3,7 +3,7 @@
 import pygame
 import pymunk
 from pymunk import Vec2d
-from objects import Ball, VLine
+from objects import Ball, HWall, Rectangle
 
 X, Y = 0, 1
 # Physics collision types
@@ -27,18 +27,23 @@ objects = []
 run_physics = True
 
 # add ground
-for n in range(2):
-    objects.append(VLine(space, 900, 5*n))
+for n in range(4):
+    objects.append(HWall(space, 900, 5*n))
 
 # add balls
-Nballs = 50
+Nballs = 25
 for i in range(Nballs):
-    x, y = 900*i/Nballs, flipy(100)
-    objects.append(Ball(space, x, y))
+    x, y = 900*i/Nballs, flipy(60)
+    objects.append(Ball(space, x, y, 20))
+
+# add rectangles
+for i in range(Nballs):
+    x, y = 900*i/Nballs, flipy(30)
+    objects.append(Rectangle(space, x, y, 20, 20))
 
 # add the special ball
-my_ball = Ball(space, 100, 100)
-my_ball.color = "red"
+my_ball = Ball(space, 100, 100, 20)
+my_ball.edgecolor = "red"
 objects.append(my_ball)
 
 while running:
@@ -62,7 +67,7 @@ while running:
 
     # Update physics
     if run_physics:
-        dt = 1.0 / 60.0
+        dt = 1.0 / 120.0
         for x in range(1):
             space.step(dt)
 
@@ -73,5 +78,5 @@ while running:
 
     # Flip screen
     pygame.display.flip()
-    clock.tick(50)
-    pygame.display.set_caption("fps: " + str(clock.get_fps()))
+    clock.tick(60)
+    pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
