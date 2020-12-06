@@ -126,6 +126,7 @@ Controls:
 ---------
 Up/Down - throttle
 Left/Right - thrust vector control
+space - start/stop engine
 0-9 - switch SAS mode
 mouse - add obstacle
 P - pause
