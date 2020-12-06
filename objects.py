@@ -5,7 +5,7 @@ from pymunk import Vec2d
 
 def flipy(y):
     """Small hack to convert chipmunk physics to pygame coordinates"""
-    return -y + 600
+    return -y + 900
 
 
 class Object():
@@ -57,7 +57,7 @@ class Wall(Object):
         p1 = int(pv1.x), int(flipy(pv1.y))
         p2 = int(pv2.x), int(flipy(pv2.y))
         pygame.draw.lines(screen, pygame.Color(
-            "lightgray"), False, [p1, p2])
+            "lightgray"), False, [p1, p2], 2)
 
 
 class HWall(Wall):
@@ -74,7 +74,7 @@ class Poly(Object):
         self.body = pymunk.Body(mass, moment)
         self.body.position = x, y
         self.shape = pymunk.Poly(self.body, points)
-        self.shape.friction = 0.5
+        self.shape.friction = 0.0
         space.add(self.body, self.shape)
 
     def draw(self, screen):
@@ -83,7 +83,7 @@ class Poly(Object):
         ps.append(ps[0])
         for i, p in enumerate(ps):
             ps[i] = int(p.x), int(flipy(p.y))
-        pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, ps)
+        pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, ps, 2)
 
 
 class Rectangle(Poly):

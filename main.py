@@ -3,7 +3,7 @@
 import pygame
 import pymunk
 from pymunk import Vec2d
-from objects import Ball, HWall, Rectangle
+from objects import Ball, Wall, Rectangle, flipy
 from rocket import Rocket
 
 X, Y = 0, 1
@@ -11,15 +11,12 @@ X, Y = 0, 1
 COLLTYPE_BALL = 2
 
 
-def flipy(y):
-    """Small hack to convert chipmunk physics to pygame coordinates"""
-    return -y + 600
-
-
 pygame.init()
-screen = pygame.display.set_mode((1600, 900))
+Lx, Ly = 1600, 900
+screen = pygame.display.set_mode((Lx, Ly))
 clock = pygame.time.Clock()
 running = True
+
 
 # Physics stuff
 space = pymunk.Space()
@@ -31,21 +28,26 @@ run_physics = True
 
 # add ground
 for n in range(4):
-    objects.append(HWall(space, 900, 5*n))
+    objects.append(Wall(space, Vec2d(0, 5*n), Vec2d(Lx, 5*n)))
+
+# add surrounding walls
+objects.append(Wall(space, Vec2d(0, 0), Vec2d(0, Ly)))
+objects.append(Wall(space, Vec2d(Lx, 0), Vec2d(Lx, Ly)))
+objects.append(Wall(space, Vec2d(0, Ly), Vec2d(Lx, Ly)))
 
 # add balls
 Nballs = 0
 for i in range(Nballs):
-    x, y = 900*i/Nballs, flipy(60)
+    x, y = Lx*i/Nballs, flipy(60)
     objects.append(Ball(space, x, y, 20))
 
 # add rectangles
 for i in range(Nballs):
-    x, y = 900*i/Nballs, flipy(30)
+    x, y = Lx*i/Nballs, flipy(30)
     objects.append(Rectangle(space, x, y, 20, 20))
 
 # add the rocket
-rocky = Rocket(space, 450, 100)
+rocky = Rocket(space, Lx/2, 100)
 objects.append(rocky)
 
 while running:
@@ -61,6 +63,14 @@ while running:
             run_physics = not run_physics
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             rocky.ignited = not rocky.ignited
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_0:
+            rocky.sas_mode = "OFF"
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+            rocky.sas_mode = "stability_assist"
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+            rocky.sas_mode = "hover"
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+            rocky.sas_mode = "land"
 
     # handle pressed keys
     keys_pressed = pygame.key.get_pressed()
@@ -70,10 +80,9 @@ while running:
         rocky.thrust -= 20
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
-        rocky.thrust_angle += 0.1
+        rocky.thrust_angle += 0.2
     if keys_pressed[pygame.K_RIGHT]:
-        rocky.thrust_angle -= 0.1
-
+        rocky.thrust_angle -= 0.2
 
     # Apply forces
     rocky.live()
@@ -93,13 +102,13 @@ while running:
     font = pygame.font.Font(None, 16)
     text = """Thrust: {:f}
 Angle: {:f}°
-TWR: {:f}""".format(rocky.thrust, rocky.thrust_angle, rocky.twr())
+TWR: {:f}
+SAS: {:s}""".format(rocky.thrust, rocky.thrust_angle, rocky.twr(), rocky.sas_mode)
     y = 5
     for line in text.splitlines():
         text = font.render(line, True, pygame.Color("black"))
         screen.blit(text, (5, y))
         y += 10
-
 
     # Flip screen
     pygame.display.flip()
