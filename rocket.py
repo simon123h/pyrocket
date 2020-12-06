@@ -71,7 +71,7 @@ class Rocket(Poly):
             if velocity.y > critical_velocity:
                 factor = 0
             elif velocity.y < -critical_velocity:
-                factor = self.h / self.body.position.y * abs(velocity.y) / critical_velocity * 0.95
+                factor = self.h / self.body.position.y * abs(velocity.y) / critical_velocity * 0.1
             else:
                 factor = 0.5
             if position.y < self.h / 1.6:
