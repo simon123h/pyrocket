@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import math
 import pygame
 import pymunk
 from pymunk import Vec2d
@@ -47,7 +48,7 @@ for i in range(Nballs):
     objects.append(Rectangle(space, x, y, 20, 20))
 
 # add the rocket
-rocky = Rocket(space, Lx/2, 100)
+rocky = Rocket(space, Lx/2, 100, mass=10)
 objects.append(rocky)
 
 while running:
@@ -71,6 +72,15 @@ while running:
             rocky.sas_mode = "hover"
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
             rocky.sas_mode = "land"
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            objects.remove(rocky)
+            rocky = Rocket(space, Lx/2, 100)
+            objects.append(rocky)
+
+    dt = 1.0 / 100.0
+
+    # update autopilot
+    rocky.autopilot(dt)
 
     # handle pressed keys
     keys_pressed = pygame.key.get_pressed()
@@ -80,16 +90,16 @@ while running:
         rocky.thrust -= 20
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
-        rocky.thrust_angle += 0.2
+        rocky.thrust_angle += 0.2 / 180. * math.pi
     if keys_pressed[pygame.K_RIGHT]:
-        rocky.thrust_angle -= 0.2
+        rocky.thrust_angle -= 0.2 / 180. * math.pi
+
 
     # Apply forces
     rocky.live()
 
     # Update physics
     if run_physics:
-        dt = 1.0 / 120.0
         for x in range(1):
             space.step(dt)
 
@@ -103,7 +113,7 @@ while running:
     text = """Thrust: {:f}
 Angle: {:f}°
 TWR: {:f}
-SAS: {:s}""".format(rocky.thrust, rocky.thrust_angle, rocky.twr(), rocky.sas_mode)
+SAS: {:s}""".format(rocky.thrust, rocky.thrust_angle / 180. * math.pi, rocky.twr(), rocky.sas_mode)
     y = 5
     for line in text.splitlines():
         text = font.render(line, True, pygame.Color("black"))
@@ -112,5 +122,5 @@ SAS: {:s}""".format(rocky.thrust, rocky.thrust_angle, rocky.twr(), rocky.sas_mod
 
     # Flip screen
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(50)
     pygame.display.set_caption("fps: " + str(int(clock.get_fps())))

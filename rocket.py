@@ -26,8 +26,7 @@ class Rocket(Poly):
         self.sas_mode = "OFF"
 
     def live(self):
-        self.autopilot()
-        angle = self.thrust_angle / 180. * math.pi
+        angle = self.thrust_angle
         thrust_x = self.thrust * math.sin(angle)
         thrust_y = self.thrust * math.cos(angle)
         thrust_force = (thrust_x, thrust_y)
@@ -35,7 +34,7 @@ class Rocket(Poly):
             self.body.apply_force_at_local_point(
                 thrust_force, self.thrust_origin)
 
-    def autopilot(self):
+    def autopilot(self, dt=1):
         # get telemetry data
         position = self.body.position
         angle = self.body.angle
@@ -47,19 +46,20 @@ class Rocket(Poly):
         elif self.sas_mode == "stability_assist":
             pass
         elif self.sas_mode == "hover":
-            # control thrust
-            self.thrust = self.mass * abs(self.space.gravity[1])
-            vy_tol = 1e-4
-            if velocity.y < vy_tol:
-                self.thrust *= 1.05
-            if velocity.y > vy_tol:
-                self.thrust *= 0.95
             # control thrust angle
-            vx_tol = 1e-4
-            if angle < vx_tol:
-                self.thrust_angle += 0.01
-            if angle > vx_tol:
-                self.thrust_angle -= 0.01
+            # self.thrust_angle = -abs(angular_velocity)*angle*0.02
+            sas_aggr = dt * 120. # how aggressive is SAS?
+            self.thrust_angle = 0
+            self.thrust_angle -= abs(velocity.x)*angle*0.2 * sas_aggr
+            self.thrust_angle -= angular_velocity*2
+            self.thrust_angle += 0.006*velocity.x * sas_aggr
+            self.thrust_angle = min(self.thrust_angle, math.pi/4)
+            self.thrust_angle = max(self.thrust_angle, -math.pi/4)
+            # control absolute thrust
+            self.thrust = self.mass * abs(self.space.gravity[1])
+            self.thrust -= self.mass * velocity.y * sas_aggr
+            self.thrust = max(self.thrust, 0)
+            self.thrust /= max(abs(math.cos(self.thrust_angle-self.body.angle)), 0.7)
 
         elif self.sas_mode == "land":
             pass
@@ -76,18 +76,12 @@ class Rocket(Poly):
             ps[i] = int(p.x), int(flipy(p.y))
         pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, ps, 2)
         if self.ignited:
-            # bottom_l = ps[0]
-            # bottom_r = ps[1]
-            # mid = bottom_l.x - bottom_
             thrust_pos = self.body.position + \
                 self.thrust_origin.rotated(self.body.angle)
             ll = 20
-            angle = -self.thrust_angle / 180. * math.pi + self.body.angle - math.pi/2
+            angle = -self.thrust_angle + self.body.angle - math.pi/2
             thrust_end = thrust_pos + ll * \
                 pymunk.Vec2d(math.cos(angle), math.sin(angle))
             p1 = int(thrust_pos.x), int(flipy(thrust_pos.y))
             p2 = int(thrust_end.x), int(flipy(thrust_end.y))
-            pygame.draw.lines(screen, pygame.Color(
-                "red"), False, [p1, p2], 2)
-
-            # print(pos)
+            pygame.draw.lines(screen, pygame.Color("red"), False, [p1, p2], 2)

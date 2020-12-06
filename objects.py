@@ -28,7 +28,7 @@ class Ball(Object):
         self.body = pymunk.Body(mass, moment)
         self.body.position = x, y
         self.shape = pymunk.Circle(self.body, radius, (0, 0))
-        self.shape.friction = 0.5
+        self.shape.friction = 0.8
         space.add(self.body, self.shape)
 
     def draw(self, screen):
@@ -74,7 +74,7 @@ class Poly(Object):
         self.body = pymunk.Body(mass, moment)
         self.body.position = x, y
         self.shape = pymunk.Poly(self.body, points)
-        self.shape.friction = 0.0
+        self.shape.friction = 0.8
         space.add(self.body, self.shape)
 
     def draw(self, screen):
