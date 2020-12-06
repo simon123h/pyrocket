@@ -2,10 +2,18 @@ import pygame
 import pymunk
 from pymunk import Vec2d
 
-
+TRACK_TARGET = None
 def flipy(y):
     """Small hack to convert chipmunk physics to pygame coordinates"""
-    return -y + 900
+    if TRACK_TARGET is None:
+        return -y + 900
+    else:
+        return -y + 700 + TRACK_TARGET.body.position.y
+
+def track(target):
+    global TRACK_TARGET
+    TRACK_TARGET = target
+
 
 
 class Object():

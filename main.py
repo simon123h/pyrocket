@@ -4,7 +4,7 @@ import math
 import pygame
 import pymunk
 from pymunk import Vec2d
-from objects import Ball, Wall, Rectangle, flipy
+from objects import Ball, Wall, Rectangle, flipy, track
 from rocket import Rocket
 
 X, Y = 0, 1
@@ -32,9 +32,8 @@ for n in range(4):
     objects.append(Wall(space, Vec2d(0, 5*n), Vec2d(Lx, 5*n)))
 
 # add surrounding walls
-objects.append(Wall(space, Vec2d(0, 0), Vec2d(0, Ly)))
-objects.append(Wall(space, Vec2d(Lx, 0), Vec2d(Lx, Ly)))
-objects.append(Wall(space, Vec2d(0, Ly), Vec2d(Lx, Ly)))
+objects.append(Wall(space, Vec2d(0, 0), Vec2d(0, 100*Ly)))
+objects.append(Wall(space, Vec2d(Lx, 0), Vec2d(Lx, 100*Ly)))
 
 # add balls
 Nballs = 0
@@ -50,6 +49,7 @@ for i in range(Nballs):
 # add the rocket
 rocky = Rocket(space, Lx/2, 100, mass=10)
 objects.append(rocky)
+track(rocky)
 
 while running:
     for event in pygame.event.get():
@@ -76,6 +76,7 @@ while running:
             objects.remove(rocky)
             rocky = Rocket(space, Lx/2, 100)
             objects.append(rocky)
+            track(rocky)
 
     dt = 1.0 / 100.0
 
@@ -109,17 +110,28 @@ while running:
         obj.draw(screen)
 
     # Display some text
-    font = pygame.font.Font(None, 16)
+    font = pygame.font.Font(None, 24)
     text = """Thrust: {:f}
 Angle: {:f}°
 TWR: {:f}
-SAS: {:s} (press 0-9 to switch)
-""".format(rocky.thrust, rocky.thrust_angle / 180. * math.pi, rocky.twr(), rocky.sas_mode)
+Height: {:.1e}
+Velocity: {:.1e}
+SAS: {:s}
+
+Controls:
+---------
+Up/Down - throttle
+Left/Right - thrust vector control
+0-9 - switch SAS mode
+mouse - add obstacle
+P - pause
+R - restart
+""".format(rocky.thrust, rocky.thrust_angle / 180. * math.pi, rocky.twr(), rocky.body.position.y, rocky.body.velocity.y, rocky.sas_mode)
     y = 5
     for line in text.splitlines():
         text = font.render(line, True, pygame.Color("black"))
         screen.blit(text, (5, y))
-        y += 10
+        y += 20
 
     # Flip screen
     pygame.display.flip()
