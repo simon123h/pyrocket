@@ -46,14 +46,14 @@ class Wall(Object):
 
     def __init__(self, space, p1, p2):
         super().__init__()
-        self.shape = pymunk.Segment(space.static_body, p1, p2, 0.0)
+        self.body = space.static_body
+        self.shape = pymunk.Segment(self.body, p1, p2, 0.0)
         self.shape.friction = 0.99
         space.add(self.shape)
 
     def draw(self, screen):
-        body = self.shape.body
-        pv1 = body.position + self.shape.a.rotated(body.angle)
-        pv2 = body.position + self.shape.b.rotated(body.angle)
+        pv1 = self.body.position + self.shape.a.rotated(self.body.angle)
+        pv2 = self.body.position + self.shape.b.rotated(self.body.angle)
         p1 = int(pv1.x), int(flipy(pv1.y))
         p2 = int(pv2.x), int(flipy(pv2.y))
         pygame.draw.lines(screen, pygame.Color(
@@ -91,4 +91,3 @@ class Rectangle(Poly):
     def __init__(self, space, x, y, w, h, mass=10):
         points = [(-w/2, -h/2), (w/2, -h/2), (w/2, h/2), (-w/2, h/2)]
         super().__init__(space, x, y, points, mass)
-

@@ -10,10 +10,12 @@ class Rocket(Poly):
         super().__init__(space, x, y, points, mass)
         self.edgecolor = "red"
 
-        self.thrust = 5000
+        self.thrust = 0
         self.thrust_angle = 0
+        self.body.angle = 0
 
-    def apply_force(self):
+    def live(self):
+        angle = self.thrust_angle / 180. * math.pi
         thrust_x = self.thrust * math.sin(self.thrust_angle)
         thrust_y = self.thrust * math.cos(self.thrust_angle)
         thrust_force = (thrust_x, thrust_y)

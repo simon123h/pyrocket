@@ -24,6 +24,7 @@ running = True
 # Physics stuff
 space = pymunk.Space()
 space.gravity = 0.0, 0.0
+space.gravity = 0.0, -300.0
 # space.gravity = 0.0, -900.0
 objects = []
 run_physics = True
@@ -47,6 +48,8 @@ for i in range(Nballs):
 rocky = Rocket(space, 450, 100)
 objects.append(rocky)
 
+first = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,8 +62,21 @@ while running:
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             run_physics = not run_physics
 
+    # handle pressed keys
+    keys_pressed = pygame.key.get_pressed()
+    if keys_pressed[pygame.K_UP]:
+        rocky.thrust += 20
+    if keys_pressed[pygame.K_DOWN]:
+        rocky.thrust -= 20
+        rocky.thrust = max(rocky.thrust, 0)
+    if keys_pressed[pygame.K_LEFT]:
+        rocky.thrust_angle -= 0.01
+    if keys_pressed[pygame.K_RIGHT]:
+        rocky.thrust_angle += 0.01
+
+
     # Apply forces
-    rocky.apply_force()
+    rocky.live()
 
     # Update physics
     if run_physics:
@@ -72,6 +88,17 @@ while running:
     screen.fill(pygame.Color("white"))
     for obj in objects:
         obj.draw(screen)
+
+    # Display some text
+    font = pygame.font.Font(None, 16)
+    text = """Thrust: {:f}
+Angle: {:f}°""".format(rocky.thrust, rocky.thrust_angle)
+    y = 5
+    for line in text.splitlines():
+        text = font.render(line, True, pygame.Color("black"))
+        screen.blit(text, (5, y))
+        y += 10
+
 
     # Flip screen
     pygame.display.flip()
