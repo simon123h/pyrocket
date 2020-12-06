@@ -4,7 +4,7 @@ import math
 import pygame
 import pymunk
 from pymunk import Vec2d
-from objects import Ball, Wall, Rectangle, flipy, track
+from objects import Ball, Wall, Rectangle, flipy, track, draw_background
 from rocket import Rocket
 
 X, Y = 0, 1
@@ -32,19 +32,8 @@ for n in range(4):
     objects.append(Wall(space, Vec2d(0, 5*n), Vec2d(Lx, 5*n)))
 
 # add surrounding walls
-objects.append(Wall(space, Vec2d(0, 0), Vec2d(0, 100*Ly)))
-objects.append(Wall(space, Vec2d(Lx, 0), Vec2d(Lx, 100*Ly)))
-
-# add balls
-Nballs = 0
-for i in range(Nballs):
-    x, y = Lx*i/Nballs, flipy(60)
-    objects.append(Ball(space, x, y, 20))
-
-# add rectangles
-for i in range(Nballs):
-    x, y = Lx*i/Nballs, flipy(30)
-    objects.append(Rectangle(space, x, y, 20, 20))
+objects.append(Wall(space, Vec2d(0, 0), Vec2d(0, 1e5*Ly)))
+objects.append(Wall(space, Vec2d(Lx, 0), Vec2d(Lx, 1e5*Ly)))
 
 # add the rocket
 rocky = Rocket(space, Lx/2, 100, mass=10)
@@ -108,8 +97,13 @@ while running:
         for x in range(1):
             space.step(dt)
 
-    # Draw stuff
+    # Clear screen
     screen.fill(pygame.Color("white"))
+
+    # Draw background
+    draw_background(screen)
+
+    # Draw objects
     for obj in objects:
         obj.draw(screen)
 
