@@ -41,29 +41,40 @@ class Rocket(Poly):
         angle = self.body.angle
         velocity = self.body.velocity
         angular_velocity = self.body.angular_velocity
-
+        # how aggressive is SAS?
+        sas_aggr = dt * 120.
         if self.sas_mode == "OFF":
             pass
-        elif self.sas_mode == "stability_assist":
-            pass
-        elif self.sas_mode == "hover":
+        if self.sas_mode  == "stability_assist":
             # control thrust angle
-            # self.thrust_angle = -abs(angular_velocity)*angle*0.02
-            sas_aggr = dt * 120. # how aggressive is SAS?
+            self.thrust_angle -= angular_velocity*0.02
+            self.thrust_angle = min(self.thrust_angle, math.pi/4)
+            self.thrust_angle = max(self.thrust_angle, -math.pi/4)
+        if self.sas_mode in ["hover",  "land"]:
+            # control thrust angle
             self.thrust_angle = 0
             self.thrust_angle -= abs(velocity.x)*angle*0.2 * sas_aggr
             self.thrust_angle -= angular_velocity*2
-            self.thrust_angle += 0.006*velocity.x * sas_aggr
+            self.thrust_angle += 0.02*velocity.x * sas_aggr
             self.thrust_angle = min(self.thrust_angle, math.pi/4)
             self.thrust_angle = max(self.thrust_angle, -math.pi/4)
             # control absolute thrust
             self.thrust = self.mass * abs(self.space.gravity[1])
             self.thrust -= self.mass * velocity.y * sas_aggr
             self.thrust = max(self.thrust, 0)
-            self.thrust /= max(abs(math.cos(self.thrust_angle-self.body.angle)), 0.7)
-
-        elif self.sas_mode == "land":
-            pass
+            self.thrust /= max(abs(math.cos(self.thrust_angle -
+                                            self.body.angle)), 0.7)
+        if self.sas_mode == "land":
+            if velocity.y > 10:
+                factor = 0
+            elif velocity.y < -10:
+                factor = self.h / self.body.position.y
+            else:
+                factor = 0
+            self.thrust *= factor
+            # factor = self.mass * (1 - 1.5 * self.body.position.y / self.h) * sas_aggr
+            # self.thrust *= math.exp(-0.5 * (self.body.position.y - self.h/5) / self.h)
+            self.thrust = max(self.thrust, 0)
 
     # thrust to weight ratio
     def twr(self):
@@ -81,12 +92,14 @@ class Rocket(Poly):
         h = self.h
         w = self.w
         fins = [(-w/2, -h/2.1), (-w*1.4, -h/2.1), (-w/2, -h/5), (-w/2, -h/2.1)]
-        fins = [pymunk.Vec2d(p).rotated(self.body.angle) + self.body.position for p in fins]
+        fins = [pymunk.Vec2d(p).rotated(self.body.angle) +
+                self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = int(p.x), int(flipy(p.y))
         pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, fins, 2)
         fins = [(w/2, -h/2.1), (w*1.4, -h/2.1), (w/2, -h/5), (w/2, -h/2.1)]
-        fins = [pymunk.Vec2d(p).rotated(self.body.angle) + self.body.position for p in fins]
+        fins = [pymunk.Vec2d(p).rotated(self.body.angle) +
+                self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = int(p.x), int(flipy(p.y))
         pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, fins, 2)
@@ -104,7 +117,8 @@ class Rocket(Poly):
             w, h = self.flame_img.get_size()
             aux_img = pygame.Surface((w*2, h*2), pygame.SRCALPHA)
             aux_img.blit(self.flame_img, (w/2, h))
-            aux_img = pygame.transform.rotozoom(aux_img, angle*180/math.pi, 0.01*ll)
+            aux_img = pygame.transform.rotozoom(
+                aux_img, angle*180/math.pi, 0.01*ll)
             aux_rect = aux_img.get_rect()
             aux_rect.centerx, aux_rect.centery = p1
             screen.blit(aux_img, aux_rect)

@@ -21,7 +21,7 @@ running = True
 
 # Physics stuff
 space = pymunk.Space()
-space.gravity = 0.0, -300.0
+space.gravity = 0.0, -600.0
 # space.gravity = 0.0, 0.0
 # space.gravity = 0.0, -900.0
 objects = []
@@ -85,9 +85,9 @@ while running:
     # handle pressed keys
     keys_pressed = pygame.key.get_pressed()
     if keys_pressed[pygame.K_UP]:
-        rocky.thrust += 20
+        rocky.thrust += 50
     if keys_pressed[pygame.K_DOWN]:
-        rocky.thrust -= 20
+        rocky.thrust -= 50
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
         rocky.thrust_angle += 0.2 / 180. * math.pi
