@@ -93,8 +93,10 @@ while running:
         rocky.thrust -= 50
         rocky.thrust = max(rocky.thrust, 0)
     if keys_pressed[pygame.K_LEFT]:
+        rocky.body.angle += 0.002
         rocky.thrust_angle += 0.2 / 180. * math.pi
     if keys_pressed[pygame.K_RIGHT]:
+        rocky.body.angle -= 0.002
         rocky.thrust_angle -= 0.2 / 180. * math.pi
 
 
