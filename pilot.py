@@ -18,38 +18,41 @@ class Autopilot(Pilot):
         super().__init__(rocket)
         self.sas_mode = "OFF"
 
+        # dict of SAS modes and associated keys
+        self.SAS_modes = {
+            pygame.K_0: "OFF",
+            pygame.K_1: "assist",
+            pygame.K_2: "stabilize",
+            pygame.K_3: "hover",
+            pygame.K_4: "land"
+        }
+
     def handle_controls(self, game):
 
-        self.steer()
+        # apply the auto controls
+        self.auto_constrols()
 
+        # apply the user controls
         for event in game.events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.rocket.engine.ignited = not self.rocket.engine.ignited
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_0:
-                self.rocket.pilot.sas_mode = "OFF"
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                self.rocket.pilot.sas_mode = "assist"
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                self.rocket.pilot.sas_mode = "stabilize"
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-                self.rocket.pilot.sas_mode = "hover"
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
-                self.rocket.pilot.sas_mode = "land"
+            # set SAS mode
+            elif event.type == pygame.KEYDOWN and event.key in self.SAS_modes:
+                self.sas_mode = self.SAS_modes[event.key]
 
         # handle pressed keys
         if game.pressed_keys[pygame.K_UP]:
-            self.rocket.engine.thrust += 50
+            self.rocket.engine.increase_thrust(50)
         if game.pressed_keys[pygame.K_DOWN]:
-            self.rocket.engine.thrust -= 50
-            self.rocket.engine.thrust = max(self.rocket.engine.thrust, 0)
+            self.rocket.engine.increase_thrust(-50)
         if game.pressed_keys[pygame.K_LEFT]:
             self.rocket.body.angle += 0.002
-            self.rocket.engine.angle += 0.2 / 180. * math.pi
+            self.rocket.engine.angle += 0.003
         if game.pressed_keys[pygame.K_RIGHT]:
             self.rocket.body.angle -= 0.002
-            self.rocket.engine.angle -= 0.2 / 180. * math.pi
+            self.rocket.engine.angle -= 0.003
 
-    def steer(self):
+    def auto_constrols(self):
         dt = PHYSICS_DT
         rocket = self.rocket
         telemetry = rocket.get_telemetry()
@@ -60,15 +63,19 @@ class Autopilot(Pilot):
         angle = telemetry["angle"]
         velocity = telemetry["velocity"]
         angular_velocity = telemetry["angular_velocity"]
+
         # how aggressive is SAS?
         sas_aggr = dt * 120.
+
         if self.sas_mode == "OFF":
             pass
+
         if self.sas_mode == "assist":
             # control thrust angle
             engine.angle -= angular_velocity*0.02
             engine.angle = min(engine.angle, math.pi/4)
             engine.angle = max(engine.angle, -math.pi/4)
+
         if self.sas_mode in ["hover", "land", "stabilize"]:
             # control thrust angle
             engine.angle = 0

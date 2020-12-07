@@ -1,6 +1,5 @@
 import math
 import pygame
-import pymunk
 from settings import flipy
 
 
@@ -26,6 +25,9 @@ class Engine():
     def set_thrust(self, thrust):
         # TODO: mind MAX_CHANGE
         self.thrust = min(max(thrust, self.MIN_THRUST), self.MAX_THRUST)
+
+    def increase_thrust(self, dthrust):
+        self.set_thrust(self.thrust + dthrust)
 
     def set_angle(self, angle):
         # TODO: mind MAX_CHANGE

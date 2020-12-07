@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import math
 import pygame
 from game import RocketGame
 from settings import FPS, PHYSICS_DT
