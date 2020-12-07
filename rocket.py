@@ -65,7 +65,7 @@ class Rocket(Poly):
         ps.append(ps[0])
         for i, p in enumerate(ps):
             ps[i] = int(p.x), int(game.flipy(p.y))
-        pygame.draw.polygon(game.screen, pygame.Color(self.color), ps)
+        pygame.draw.polygon(game.screen, pygame.Color(*self.color), ps)
         pygame.draw.lines(game.screen, pygame.Color("black"), False, ps, 2)
         # fins
         h = self.h
@@ -75,14 +75,14 @@ class Rocket(Poly):
                 self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = int(p.x), int(game.flipy(p.y))
-        pygame.draw.polygon(game.screen, pygame.Color(self.color), fins)
+        pygame.draw.polygon(game.screen, pygame.Color(*self.color), fins)
         pygame.draw.lines(game.screen, pygame.Color("black"), False, fins, 2)
         fins = [(w/2, -h/2.1), (w*1.4, -h/2.1), (w/2, -h/5), (w/2, -h/2.1)]
         fins = [pymunk.Vec2d(p).rotated(self.body.angle) +
                 self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = int(p.x), int(game.flipy(p.y))
-        pygame.draw.polygon(game.screen, pygame.Color(self.color), fins)
+        pygame.draw.polygon(game.screen, pygame.Color(*self.color), fins)
         pygame.draw.lines(game.screen, pygame.Color("black"), False, fins, 2)
         # draw the engine
         engine_position = self.body.position + \
