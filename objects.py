@@ -1,33 +1,7 @@
 import pygame
 import pymunk
 from pymunk import Vec2d
-
-TRACK_TARGET = None
-
-
-def flipy(y):
-    """Small hack to convert chipmunk physics to pygame coordinates"""
-    if TRACK_TARGET is None:
-        return -y + 900
-    else:
-        return -y + 500 + TRACK_TARGET.body.position.y
-
-
-def track(target):
-    global TRACK_TARGET
-    TRACK_TARGET = target
-
-
-def draw_background(screen):
-    global TRACK_TARGET
-    h = TRACK_TARGET.body.position.y
-    f = 2000/h
-    color = (254-f, 254-f, 254-f)
-    dist = 700
-    offs = h % dist
-    for i in range(-1, 5):
-        shift = offs + i*dist
-        pygame.draw.rect(screen, color, (0, 0+shift, 1600, dist/2))
+from settings import flipy
 
 
 class Object():
@@ -38,6 +12,11 @@ class Object():
         self.facecolor = "red"
         self.edgecolor = "blue"
 
+    # update the external forces
+    def update_forces(self):
+        pass
+
+    # draw the object on a screen
     def draw(self, screen):
         pass
 
