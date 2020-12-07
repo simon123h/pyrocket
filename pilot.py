@@ -71,27 +71,33 @@ class Autopilot(Pilot):
             pass
 
         if self.sas_mode == "assist":
-            # control thrust angle
-            engine.angle -= angular_velocity*0.02
-            engine.angle = min(engine.angle, math.pi/4)
-            engine.angle = max(engine.angle, -math.pi/4)
+            # slowly cancel angular angular velocity
+            engine.increase_angle(-0.02*angular_velocity)
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
-            # control thrust angle
-            engine.angle = 0
-            engine.angle -= abs(velocity.x)*angle*0.2 * sas_aggr
-            engine.angle -= angular_velocity*2
-            engine.angle += 0.02*velocity.x * sas_aggr
-            engine.angle = min(engine.angle, math.pi/4)
-            engine.angle = max(engine.angle, -math.pi/4)
-            # control absolute thrust
+            # control engine's thrust angle
+            thrust_angle = 0
+            # cancel rocket angle
+            thrust_angle -= abs(velocity.x)*angle*0.2 * sas_aggr
+            # cancel angular velocity
+            thrust_angle -= angular_velocity*2
+            # cancel lateral velocity
+            thrust_angle += 0.02*velocity.x * sas_aggr
+            # apply thrust_angle to engine
+            engine.set_angle(thrust_angle)
+
+            # control engine thrust
             if self.sas_mode in ["hover", "land"]:
-                engine.thrust = rocket.mass * abs(rocket.space.gravity[1])
+                # set TWR = 1
+                thrust = rocket.mass * abs(rocket.space.gravity[1])
+                # cancel vertical velocity
                 if self.sas_mode == "hover":
-                    engine.thrust -= rocket.mass * velocity.y * sas_aggr
-                engine.thrust = max(engine.thrust, 0)
-                engine.thrust /= max(abs(math.cos(engine.angle -
-                                                  angle)), 0.7)
+                    thrust -= rocket.mass * velocity.y * sas_aggr
+                # scale thrust to vertical component
+                thrust /= max(abs(math.cos(engine.angle - angle)), 0.7)
+                # apply thrust to engine
+                engine.set_thrust(thrust)
+
         if self.sas_mode == "land":
             critical_velocity = 10
             if velocity.y > critical_velocity:
@@ -101,11 +107,10 @@ class Autopilot(Pilot):
                     abs(velocity.y) / critical_velocity * 0.3
             else:
                 factor = 0.5
-            if position.y < rocket.h / 1.6:
+            if position.y < rocket.h / 1.65:
                 engine.ignited = False
                 self.sas_mode = "stabilize"
-            engine.thrust *= factor
-            engine.thrust = max(engine.thrust, 0)
+            engine.set_thrust(factor * engine.thrust)
 
     def trajectory(self):
         # TODO: estimate the trajectory of the rocket

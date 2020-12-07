@@ -31,6 +31,9 @@ class Engine():
         # TODO: mind MAX_CHANGE
         self.angle = min(max(angle, -self.MAX_ANGLE), self.MAX_ANGLE)
 
+    def increase_angle(self, dangle):
+        self.set_angle(self.angle + dangle)
+
     def draw(self, game, pos, global_angle):
         if not self.ignited:
             return

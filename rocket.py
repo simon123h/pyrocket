@@ -1,9 +1,9 @@
 import math
+import pygame
+import pymunk
 from objects import Poly
 from engine import Engine
 from pilot import Autopilot
-import pygame
-import pymunk
 
 
 class Rocket(Poly):
@@ -16,6 +16,7 @@ class Rocket(Poly):
         self.mass = mass
         self.edgecolor = "blue"
 
+        # rocket dimensions
         self.w = w
         self.h = h
 

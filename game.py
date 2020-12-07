@@ -103,7 +103,7 @@ class RocketGame():
         self.screen.fill(pygame.Color("white"))
         # Draw background
         h = self.rocket.body.position.y
-        f = 2000/h
+        f = max(2000/h, 0)
         color = (254-f, 254-f, 254-f)
         dist = 700
         offs = h % dist
