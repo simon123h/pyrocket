@@ -1,6 +1,6 @@
 import math
 import pygame
-from settings import PHYSICS_DT
+from game import RocketGame
 
 
 class Pilot():
@@ -30,7 +30,7 @@ class Autopilot(Pilot):
     def handle_controls(self, game):
 
         # apply the auto controls
-        self.auto_constrols()
+        self.auto_constrols(game)
 
         # apply the user controls
         for event in game.events:
@@ -52,8 +52,8 @@ class Autopilot(Pilot):
             self.rocket.body.angle -= 0.002
             self.rocket.engine.angle -= 0.003
 
-    def auto_constrols(self):
-        dt = PHYSICS_DT
+    def auto_constrols(self, game):
+        dt = game.DT
         rocket = self.rocket
         telemetry = rocket.get_telemetry()
         engine = rocket.engine

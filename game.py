@@ -5,15 +5,24 @@ import pymunk
 from pymunk import Vec2d
 from objects import Wall, Ball
 from rocket import Rocket
-from settings import FRAME_WIDTH, FRAME_HEIGHT, GRAVITY, PHYSICS_DT
 
 
 class RocketGame():
 
+    # Settings
+    FRAME_WIDTH = 1600  # in px
+    FRAME_HEIGHT = 900  # in px
+    GRAVITY = 600  # in m/s^2
+    DT = 1. / 100.  # in seconds
+    FPS = 50
+    SAVE_IMG = False
+    # ZOOM = 1  # in px / meter
+
     def __init__(self):
 
         # screen and runtime
-        self.screen = pygame.display.set_mode((FRAME_WIDTH, FRAME_HEIGHT))
+        self.screen = pygame.display.set_mode(
+            (RocketGame.FRAME_WIDTH, RocketGame.FRAME_HEIGHT))
         self.clock = pygame.time.Clock()
 
         # game state variables
@@ -22,7 +31,7 @@ class RocketGame():
 
         # physics stuff
         self.space = pymunk.Space()
-        self.space.gravity = 0.0, -GRAVITY
+        self.space.gravity = 0.0, -RocketGame.GRAVITY
         self.ntimesteps = 2  # number of timesteps per frame
 
         # game objects
@@ -36,12 +45,12 @@ class RocketGame():
         # add ground
         for n in range(4):
             self.add_object(Wall(self.space, Vec2d(
-                0, 2*n), Vec2d(FRAME_WIDTH, 2*n)))
+                0, 2*n), Vec2d(RocketGame.FRAME_WIDTH, 2*n)))
         # add surrounding walls
         self.add_object(Wall(self.space, Vec2d(
-            0, 0), Vec2d(0, 1e5*FRAME_HEIGHT)))
-        self.add_object(Wall(self.space, Vec2d(FRAME_WIDTH, 0),
-                             Vec2d(FRAME_WIDTH, 1e5*FRAME_HEIGHT)))
+            0, 0), Vec2d(0, 1e5*RocketGame.FRAME_HEIGHT)))
+        self.add_object(Wall(self.space, Vec2d(RocketGame.FRAME_WIDTH, 0),
+                             Vec2d(RocketGame.FRAME_WIDTH, 1e5*RocketGame.FRAME_HEIGHT)))
         # add the rocket
         self.add_new_rocket()
 
@@ -62,7 +71,7 @@ class RocketGame():
         if self.rocket is not None:
             self.remove_object(self.rocket)
         # create new rocket
-        self.rocket = Rocket(self.space, FRAME_WIDTH/2, 100)
+        self.rocket = Rocket(self.space, RocketGame.FRAME_WIDTH/2, 100)
         # add it to the game
         self.add_object(self.rocket)
 
@@ -73,7 +82,7 @@ class RocketGame():
             for obj in self.objects:
                 obj.update_forces()
             # perform time steps
-            self.space.step(PHYSICS_DT)
+            self.space.step(RocketGame.DT)
 
     # process the controls of the game (events, pressed keys, etc.)
     def handle_controls(self):
@@ -110,7 +119,7 @@ class RocketGame():
         for i in range(-1, 5):
             shift = offs + i*dist
             pygame.draw.rect(self.screen, color,
-                             (0, 0+shift, FRAME_WIDTH, dist/2))
+                             (0, 0+shift, RocketGame.FRAME_WIDTH, dist/2))
         # Draw objects
         for obj in self.objects:
             obj.draw(self)
@@ -142,6 +151,6 @@ R - restart
     # Small hack to convert chipmunk physics to pygame coordinates
     def flipy(self, y):
         if self.rocket is None:
-            return -y + FRAME_HEIGHT
+            return -y + RocketGame.FRAME_HEIGHT
         else:
-            return -y + FRAME_HEIGHT / 2 + self.rocket.body.position.y
+            return -y + RocketGame.FRAME_HEIGHT / 2 + self.rocket.body.position.y
