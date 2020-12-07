@@ -15,6 +15,7 @@ class Rocket(Poly):
         self.space = space
         self.mass = mass
         self.edgecolor = "blue"
+        self.shape.friction = 0
 
         # rocket dimensions
         self.w = w

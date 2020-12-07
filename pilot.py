@@ -72,17 +72,14 @@ class Autopilot(Pilot):
 
         if self.sas_mode == "assist":
             # slowly cancel angular angular velocity
-            engine.increase_angle(-0.02*angular_velocity)
+            engine.increase_angle(-0.2*angular_velocity)
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
-            # control engine's thrust angle
-            thrust_angle = 0
-            # cancel rocket angle
-            thrust_angle -= abs(velocity.x)*angle*0.2 * sas_aggr
+            # cancel rocket angle and lateral velocity
+            translation_shift = 0.001*velocity.x
+            thrust_angle = -2*(angle-translation_shift)*0.2 * sas_aggr
             # cancel angular velocity
-            thrust_angle -= angular_velocity*2
-            # cancel lateral velocity
-            thrust_angle += 0.02*velocity.x * sas_aggr
+            thrust_angle -= 0.2*angular_velocity
             # apply thrust_angle to engine
             engine.set_angle(thrust_angle)
 
