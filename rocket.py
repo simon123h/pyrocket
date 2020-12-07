@@ -45,7 +45,8 @@ class Rocket(Poly):
         data = {}
         data["position"] = self.body.position
         data["velocity"] = self.body.velocity
-        data["angle"] = self.body.angle
+        angle = (self.body.angle + math.pi) % (2 * math.pi) - math.pi
+        data["angle"] = angle
         data["angular_velocity"] = self.body.angular_velocity
         return data
 
