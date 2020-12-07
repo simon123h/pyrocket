@@ -1,6 +1,5 @@
 import math
 import pygame
-from game import RocketGame
 
 
 class Pilot():
@@ -39,6 +38,7 @@ class Autopilot(Pilot):
             # set SAS mode
             elif event.type == pygame.KEYDOWN and event.key in self.SAS_modes:
                 self.sas_mode = self.SAS_modes[event.key]
+                self.rocket.engine.ignited = True
 
         # handle pressed keys
         if game.pressed_keys[pygame.K_UP]:
