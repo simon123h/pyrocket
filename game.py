@@ -13,7 +13,7 @@ class RocketGame():
     FRAME_WIDTH = 1600  # in px
     FRAME_HEIGHT = 900  # in px
     GRAVITY = 600  # in m/s^2
-    DT = 1. / 100.  # in seconds
+    DT = 1. / 1000.  # in seconds
     FPS = 50
     SAVE_IMG = False
     # ZOOM = 1  # in px / meter

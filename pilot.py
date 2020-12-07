@@ -40,17 +40,22 @@ class Autopilot(Pilot):
                 self.sas_mode = self.SAS_modes[event.key]
                 self.rocket.engine.ignited = True
 
+        # for some SAS modes, we give user controls a higher weight
+        servo = 1
+        if self.sas_mode in ["hover", "land", "stabilize"]:
+            servo = 8
+
         # handle pressed keys
         if game.pressed_keys[pygame.K_UP]:
-            self.rocket.engine.increase_thrust(50)
+            self.rocket.engine.increase_thrust(100*servo)
         if game.pressed_keys[pygame.K_DOWN]:
-            self.rocket.engine.increase_thrust(-50)
+            self.rocket.engine.increase_thrust(-100*servo)
         if game.pressed_keys[pygame.K_LEFT]:
-            self.rocket.body.angle += 0.002
-            self.rocket.engine.angle += 0.003
+            self.rocket.body.angle += 0.002 * servo
+            self.rocket.engine.angle += 0.003 * servo
         if game.pressed_keys[pygame.K_RIGHT]:
-            self.rocket.body.angle -= 0.002
-            self.rocket.engine.angle -= 0.003
+            self.rocket.body.angle -= 0.002 * servo
+            self.rocket.engine.angle -= 0.003 * servo
 
     def auto_constrols(self, game):
         dt = game.DT
