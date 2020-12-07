@@ -1,7 +1,5 @@
 import math
 import pygame
-from settings import flipy
-
 
 class Engine():
 
@@ -33,16 +31,16 @@ class Engine():
         # TODO: mind MAX_CHANGE
         self.angle = min(max(angle, -self.MAX_ANGLE), self.MAX_ANGLE)
 
-    def draw(self, screen, pos, global_angle):
+    def draw(self, game, pos, global_angle):
         if not self.ignited:
             return
         ll = 0.2 * math.sqrt(self.thrust)
         angle = global_angle - self.angle
-        p1 = int(pos.x), int(flipy(pos.y))
+        p1 = int(pos.x), int(game.flipy(pos.y))
         # thrust_end = pos + ll * \
         #     pymunk.Vec2d(math.sin(angle), -math.cos(angle))
-        # p2 = int(thrust_end.x), int(flipy(thrust_end.y))
-        # pygame.draw.lines(screen, pygame.Color("red"), False, [p1, p2], 2)
+        # p2 = int(thrust_end.x), int(game.flipy(thrust_end.y))
+        # pygame.draw.lines(game.screen, pygame.Color("red"), False, [p1, p2], 2)
         w, h = self.flame_img.get_size()
         aux_img = pygame.Surface((w*2, h*2), pygame.SRCALPHA)
         aux_img.blit(self.flame_img, (w/2, h))
@@ -50,4 +48,4 @@ class Engine():
             aux_img, angle*180/math.pi, 0.01*ll)
         aux_rect = aux_img.get_rect()
         aux_rect.centerx, aux_rect.centery = p1
-        screen.blit(aux_img, aux_rect)
+        game.screen.blit(aux_img, aux_rect)

@@ -5,7 +5,7 @@ import pymunk
 from pymunk import Vec2d
 from objects import Wall, Ball
 from rocket import Rocket
-from settings import FRAME_WIDTH, FRAME_HEIGHT, GRAVITY, PHYSICS_DT, track, draw_background, flipy
+from settings import FRAME_WIDTH, FRAME_HEIGHT, GRAVITY, PHYSICS_DT
 
 
 class RocketGame():
@@ -63,9 +63,8 @@ class RocketGame():
             self.remove_object(self.rocket)
         # create new rocket
         self.rocket = Rocket(self.space, FRAME_WIDTH/2, 100)
-        # add it to the game and activate tracking
+        # add it to the game
         self.add_object(self.rocket)
-        track(self.rocket)
 
     # update the physics of the game and each object
     def update_physics(self):
@@ -88,7 +87,7 @@ class RocketGame():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos[0], flipy(event.pos[1])
+                x, y = event.pos[0], self.flipy(event.pos[1])
                 self.add_object(Ball(self.space, x, y))
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.add_new_rocket()
@@ -103,11 +102,18 @@ class RocketGame():
         # Clear screen
         self.screen.fill(pygame.Color("white"))
         # Draw background
-        draw_background(self.screen)
+        h = self.rocket.body.position.y
+        f = 2000/h
+        color = (254-f, 254-f, 254-f)
+        dist = 700
+        offs = h % dist
+        for i in range(-1, 5):
+            shift = offs + i*dist
+            pygame.draw.rect(self.screen, color,
+                             (0, 0+shift, FRAME_WIDTH, dist/2))
         # Draw objects
         for obj in self.objects:
-            obj.draw(self.screen)
-
+            obj.draw(self)
         # Display some text
         font = pygame.font.Font(None, 24)
         text = """Thrust: {:f}
@@ -132,3 +138,10 @@ R - restart
             text = font.render(line, True, pygame.Color("black"))
             self.screen.blit(text, (5, y))
             y += 20
+
+    # Small hack to convert chipmunk physics to pygame coordinates
+    def flipy(self, y):
+        if self.rocket is None:
+            return -y + FRAME_HEIGHT
+        else:
+            return -y + FRAME_HEIGHT / 2 + self.rocket.body.position.y

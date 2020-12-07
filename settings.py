@@ -1,34 +1,12 @@
 import pygame
 
-FRAME_WIDTH = 1600
-FRAME_HEIGHT = 900
+FRAME_WIDTH = 1600  # in px
+FRAME_HEIGHT = 900  # in px
 
 TRACK_TARGET = None
 
-GRAVITY = 600
-PHYSICS_DT = 1. / 100.
+GRAVITY = 600  # in m/s^2
+PHYSICS_DT = 1. / 100.  # in seconds
 FPS = 50
 
-# Small hack to convert chipmunk physics to pygame coordinates
-def flipy(y):
-    if TRACK_TARGET is None:
-        return -y + FRAME_HEIGHT
-    else:
-        return -y + FRAME_HEIGHT / 2 + TRACK_TARGET.body.position.y
-
-
-def track(target):
-    global TRACK_TARGET
-    TRACK_TARGET = target
-
-
-def draw_background(screen):
-    global TRACK_TARGET
-    h = TRACK_TARGET.body.position.y
-    f = 2000/h
-    color = (254-f, 254-f, 254-f)
-    dist = 700
-    offs = h % dist
-    for i in range(-1, 5):
-        shift = offs + i*dist
-        pygame.draw.rect(screen, color, (0, 0+shift, 1600, dist/2))
+ZOOM = 1  # in px / meter

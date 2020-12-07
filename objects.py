@@ -1,7 +1,6 @@
 import pygame
 import pymunk
 from pymunk import Vec2d
-from settings import flipy
 
 
 class Object():
@@ -16,8 +15,8 @@ class Object():
     def update_forces(self):
         pass
 
-    # draw the object on a screen
-    def draw(self, screen):
+    # draw the object on a game's screen
+    def draw(self, game):
         pass
 
 
@@ -32,15 +31,16 @@ class Ball(Object):
         self.shape.friction = 0.8
         space.add(self.body, self.shape)
 
-    def draw(self, screen):
+    def draw(self, game):
         r = self.shape.radius
         v = self.body.position
         rot = self.body.rotation_vector
-        p = int(v[0]), int(flipy(v[1]))
+        p = int(v[0]), int(game.flipy(v[1]))
         p2 = p + Vec2d(rot.x, -rot.y) * r * 0.9
         p2 = int(p2.x), int(p2.y)
-        pygame.draw.circle(screen, pygame.Color(self.edgecolor), p, int(r), 2)
-        pygame.draw.line(screen, pygame.Color(self.facecolor), p, p2)
+        pygame.draw.circle(game.screen, pygame.Color(
+            self.edgecolor), p, int(r), 2)
+        pygame.draw.line(game.screen, pygame.Color(self.facecolor), p, p2)
 
 
 class Wall(Object):
@@ -52,12 +52,12 @@ class Wall(Object):
         self.shape.friction = 0.99
         space.add(self.shape)
 
-    def draw(self, screen):
+    def draw(self, game):
         pv1 = self.body.position + self.shape.a.rotated(self.body.angle)
         pv2 = self.body.position + self.shape.b.rotated(self.body.angle)
-        p1 = int(pv1.x), int(flipy(pv1.y))
-        p2 = int(pv2.x), int(flipy(pv2.y))
-        pygame.draw.lines(screen, pygame.Color(
+        p1 = int(pv1.x), int(game.flipy(pv1.y))
+        p2 = int(pv2.x), int(game.flipy(pv2.y))
+        pygame.draw.lines(game.screen, pygame.Color(
             "black"), False, [p1, p2], 2)
 
 
@@ -78,13 +78,14 @@ class Poly(Object):
         self.shape.friction = 0.8
         space.add(self.body, self.shape)
 
-    def draw(self, screen):
+    def draw(self, game):
         ps = [p.rotated(self.body.angle) +
               self.body.position for p in self.shape.get_vertices()]
         ps.append(ps[0])
         for i, p in enumerate(ps):
-            ps[i] = int(p.x), int(flipy(p.y))
-        pygame.draw.lines(screen, pygame.Color(self.edgecolor), False, ps, 2)
+            ps[i] = int(p.x), int(game.flipy(p.y))
+        pygame.draw.lines(game.screen, pygame.Color(
+            self.edgecolor), False, ps, 2)
 
 
 class Rectangle(Poly):
