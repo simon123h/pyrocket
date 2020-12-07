@@ -6,7 +6,8 @@ FRAME_HEIGHT = 900
 TRACK_TARGET = None
 
 GRAVITY = 600
-
+FPS = 50
+PHYSICS_DT = 1. / 100.
 
 # Small hack to convert chipmunk physics to pygame coordinates
 def flipy(y):

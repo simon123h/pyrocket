@@ -48,10 +48,9 @@ class Rocket(Poly):
         data["angular_velocity"] = self.body.angular_velocity
         return data
 
-    # let the pilot / autopilot control the rocket
-    def control(self, dt=1):
-        self.pilot.dt = dt
-        self.pilot.control()
+    # control the rocket using the pilot / autopilot
+    def handle_controls(self, game):
+        self.pilot.handle_controls(game)
 
     # thrust to weight ratio
     def twr(self):

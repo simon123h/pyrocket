@@ -1,13 +1,14 @@
 import math
+import pygame
+from settings import PHYSICS_DT
 
 
 class Pilot():
 
     def __init__(self, rocket):
         self.rocket = rocket
-        self.dt = 1. / 100.
 
-    def control(self):
+    def handle_constrols(self, game):
         pass
 
 
@@ -17,7 +18,39 @@ class Autopilot(Pilot):
         super().__init__(rocket)
         self.sas_mode = "OFF"
 
-    def control(self):
+    def handle_controls(self, game):
+
+        self.steer()
+
+        for event in game.events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.rocket.engine.ignited = not self.rocket.engine.ignited
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_0:
+                self.rocket.pilot.sas_mode = "OFF"
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+                self.rocket.pilot.sas_mode = "assist"
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+                self.rocket.pilot.sas_mode = "stabilize"
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+                self.rocket.pilot.sas_mode = "hover"
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
+                self.rocket.pilot.sas_mode = "land"
+
+        # handle pressed keys
+        if game.pressed_keys[pygame.K_UP]:
+            self.rocket.engine.thrust += 50
+        if game.pressed_keys[pygame.K_DOWN]:
+            self.rocket.engine.thrust -= 50
+            self.rocket.engine.thrust = max(self.rocket.engine.thrust, 0)
+        if game.pressed_keys[pygame.K_LEFT]:
+            self.rocket.body.angle += 0.002
+            self.rocket.engine.angle += 0.2 / 180. * math.pi
+        if game.pressed_keys[pygame.K_RIGHT]:
+            self.rocket.body.angle -= 0.002
+            self.rocket.engine.angle -= 0.2 / 180. * math.pi
+
+    def steer(self):
+        dt = PHYSICS_DT
         rocket = self.rocket
         telemetry = rocket.get_telemetry()
         engine = rocket.engine
@@ -28,7 +61,7 @@ class Autopilot(Pilot):
         velocity = telemetry["velocity"]
         angular_velocity = telemetry["angular_velocity"]
         # how aggressive is SAS?
-        sas_aggr = self.dt * 120.
+        sas_aggr = dt * 120.
         if self.sas_mode == "OFF":
             pass
         if self.sas_mode == "assist":
