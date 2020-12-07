@@ -39,10 +39,10 @@ class Engine():
             return
         ll = 0.2 * math.sqrt(self.thrust)
         angle = global_angle - self.angle
-        p1 = int(pos.x), int(game.flipy(pos.y))
+        p1 = game.pos2screen(pos)
         # thrust_end = pos + ll * \
         #     pymunk.Vec2d(math.sin(angle), -math.cos(angle))
-        # p2 = int(thrust_end.x), int(game.flipy(thrust_end.y))
+        # p2 = game.pos2screen(thrust_end)
         # pygame.draw.lines(game.screen, pygame.Color("red"), False, [p1, p2], 2)
         w, h = self.flame_img.get_size()
         aux_img = pygame.Surface((w*2, h*2), pygame.SRCALPHA)

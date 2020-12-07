@@ -44,13 +44,8 @@ class RocketGame():
 
         # add ground
         for n in range(4):
-            self.add_object(Wall(self.space, Vec2d(
-                0, 2*n), Vec2d(self.FRAME_WIDTH, 2*n)))
-        # add surrounding walls
-        self.add_object(Wall(self.space, Vec2d(
-            0, 0), Vec2d(0, 1e5*self.FRAME_HEIGHT)))
-        self.add_object(Wall(self.space, Vec2d(self.FRAME_WIDTH, 0),
-                             Vec2d(self.FRAME_WIDTH, 1e5*self.FRAME_HEIGHT)))
+            self.add_object(
+                Wall(self.space, Vec2d(-1e9, 2*n), Vec2d(1e9, 2*n)))
         # add the rocket
         self.add_new_rocket()
 
@@ -71,7 +66,7 @@ class RocketGame():
         if self.rocket is not None:
             self.remove_object(self.rocket)
         # create new rocket
-        self.rocket = Rocket(self.space, self.FRAME_WIDTH/2, 100)
+        self.rocket = Rocket(self.space, 0, 100)
         # add it to the game
         self.add_object(self.rocket)
 
@@ -96,7 +91,7 @@ class RocketGame():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos[0], self.flipy(event.pos[1])
+                x, y = self.screen2pos(event.pos)
                 self.add_object(Ball(self.space, x, y))
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.add_new_rocket()
@@ -111,15 +106,15 @@ class RocketGame():
         # Clear screen
         self.screen.fill(pygame.Color("white"))
         # Draw background
-        h = self.rocket.body.position.y
-        f = max(2000/h, 0)
-        color = (254-f, 254-f, 254-f)
+        x, y = self.rocket.body.position
+        color = (240, 240, 240)
         dist = 700
-        offs = h % dist
+        offsx, offsy = -x % dist, y % dist
         for i in range(-1, 5):
-            shift = offs + i*dist
             pygame.draw.rect(self.screen, color,
-                             (0, 0+shift, self.FRAME_WIDTH, dist/2))
+                             (offsx + i*dist, 0, dist/20, self.FRAME_HEIGHT))
+            pygame.draw.rect(self.screen, color,
+                             (0, offsy + i*dist, self.FRAME_WIDTH, dist/20))
         # Draw objects
         for obj in self.objects:
             obj.draw(self)
@@ -148,9 +143,20 @@ R - restart
             self.screen.blit(text, (5, y))
             y += 20
 
-    # Small hack to convert chipmunk physics to pygame coordinates
-    def flipy(self, y):
-        if self.rocket is None:
-            return -y + self.FRAME_HEIGHT
-        else:
-            return -y + self.FRAME_HEIGHT / 2 + self.rocket.body.position.y
+    # transform global coordinates to screen coordinates
+    def pos2screen(self, pos):
+        x = pos.x + self.FRAME_WIDTH / 2.
+        y = pos.y - self.FRAME_HEIGHT / 2.
+        if self.rocket is not None:
+            x -= self.rocket.body.position.x
+            y -= self.rocket.body.position.y
+        return int(x), -int(y)
+
+    # transform screen coordinates to global coordinates
+    def screen2pos(self, pos):
+        x = pos[0] - self.FRAME_WIDTH / 2.
+        y = -pos[1] + self.FRAME_HEIGHT / 2.
+        if self.rocket is not None:
+            x += self.rocket.body.position.x
+            y += self.rocket.body.position.y
+        return Vec2d(x, y)

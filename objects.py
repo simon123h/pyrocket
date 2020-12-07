@@ -35,7 +35,7 @@ class Ball(Object):
         r = self.shape.radius
         v = self.body.position
         rot = self.body.rotation_vector
-        p = int(v[0]), int(game.flipy(v[1]))
+        p = game.pos2screen(v)
         p2 = p + Vec2d(rot.x, -rot.y) * r * 0.9
         p2 = int(p2.x), int(p2.y)
         pygame.draw.circle(game.screen, pygame.Color(
@@ -55,8 +55,8 @@ class Wall(Object):
     def draw(self, game):
         pv1 = self.body.position + self.shape.a.rotated(self.body.angle)
         pv2 = self.body.position + self.shape.b.rotated(self.body.angle)
-        p1 = int(pv1.x), int(game.flipy(pv1.y))
-        p2 = int(pv2.x), int(game.flipy(pv2.y))
+        p1 = game.pos2screen(pv1)
+        p2 = game.pos2screen(pv2)
         pygame.draw.lines(game.screen, pygame.Color(
             "black"), False, [p1, p2], 2)
 
@@ -83,7 +83,7 @@ class Poly(Object):
               self.body.position for p in self.shape.get_vertices()]
         ps.append(ps[0])
         for i, p in enumerate(ps):
-            ps[i] = int(p.x), int(game.flipy(p.y))
+            ps[i] = game.pos2screen(p)
         pygame.draw.lines(game.screen, pygame.Color(
             self.edgecolor), False, ps, 2)
 
