@@ -81,10 +81,9 @@ class Autopilot(Pilot):
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
             # cancel rocket angle and lateral velocity
-            angle_shift = max(min(0.0005*velocity.x, 0.1), -0.1)
-            
+            angle_shift = max(min(0.0005*velocity.x, 0.2), -0.2)
             mul = min(abs(velocity.x), 300)
-            thrust_angle = -0.4*(angle-angle_shift) * sas_aggr * mul
+            thrust_angle = -0.1*(angle-angle_shift) * sas_aggr * mul
             # cancel angular velocity
             thrust_angle -= 0.2*angular_velocity
             # apply thrust_angle to engine
