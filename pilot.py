@@ -114,6 +114,9 @@ class Autopilot(Pilot):
                 engine.ignited = False
                 self.sas_mode = "stabilize"
             engine.set_thrust(factor * engine.thrust)
+            rocket.airbrakes_enabled = True
+        else:
+            rocket.airbrakes_enabled = False
 
     def trajectory(self):
         # TODO: estimate the trajectory of the rocket

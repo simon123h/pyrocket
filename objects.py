@@ -15,6 +15,20 @@ class Object():
     def update_forces(self):
         pass
 
+    # add the aerodynamic drag forces
+    def update_drag(self):
+        pass
+
+    # Calculate the aerodynamic drag force using the drag equation:
+    # F = coeff * A * v^2 (in direction of v)
+    def _drag_formula(self, area, velocity=None, coeff=1e-3):
+        if velocity is None:
+            velocity = self.body.velocity
+        # v^2 in direction of v
+        v2 = velocity.length * velocity
+        # drag force equation
+        return -coeff * area * v2
+
     # draw the object on a game's screen
     def draw(self, game):
         pass

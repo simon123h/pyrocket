@@ -12,7 +12,8 @@ class RocketGame():
     # Settings
     FRAME_WIDTH = 1600  # in px
     FRAME_HEIGHT = 900  # in px
-    GRAVITY = 600  # in m/s^2
+    GRAVITY = 600
+    DRAG = 1
     DT = 1. / 1000.  # in seconds
     FPS = 50
     SAVE_IMG = False
@@ -75,6 +76,7 @@ class RocketGame():
         if self.run_physics:
             # update the external forces for each object
             for obj in self.objects:
+                obj.update_drag()
                 obj.update_forces()
             # perform time steps
             self.space.step(self.DT)
@@ -121,7 +123,6 @@ class RocketGame():
         # Display some text
         font = pygame.font.Font(None, 24)
         text = """Thrust: {:f}
-Angle: {:f}°
 TWR: {:f}
 Height: {:.1e}
 Velocity: {:.1e}
@@ -136,7 +137,7 @@ space - start/stop engine
 mouse - add obstacle
 P - pause
 R - restart
-""".format(self.rocket.engine.thrust, self.rocket.engine.angle / 180. * math.pi, self.rocket.twr(), self.rocket.body.position.y, self.rocket.body.velocity.y, self.rocket.pilot.sas_mode)
+""".format(self.rocket.engine.thrust, self.rocket.twr(), self.rocket.body.position.y, self.rocket.body.velocity.y, self.rocket.pilot.sas_mode)
         y = 5
         for line in text.splitlines():
             text = font.render(line, True, pygame.Color("black"))
