@@ -96,7 +96,7 @@ class Autopilot(Pilot):
                 thrust = rocket.mass * abs(rocket.space.gravity[1])
                 # cancel vertical velocity
                 if self.sas_mode == "hover":
-                    thrust -= rocket.mass * velocity.y * sas_aggr
+                    thrust -= 5 * rocket.mass * velocity.y * sas_aggr
                 # scale thrust to vertical component
                 thrust /= max(abs(math.cos(engine.angle - angle)), 0.7)
                 # apply thrust to engine
