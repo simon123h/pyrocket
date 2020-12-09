@@ -3,7 +3,7 @@ import math
 import pygame
 import pymunk
 from pymunk import Vec2d
-from objects import Wall, Ball
+from objects import Wall, Ball, Rectangle
 from rocket import Rocket
 
 
@@ -70,6 +70,20 @@ class RocketGame():
         self.rocket = Rocket(self.space, 0, 100)
         # add it to the game
         self.add_object(self.rocket)
+
+        # # add some component
+        # rpos = self.rocket.body.position + Vec2d(20, 0)
+        # rect = Rectangle(self.space, *rpos, 10, 10)
+        # self.add_object(rect)
+        # constraint = pymunk.PinJoint(self.rocket.body, rect.body, (20, 0), (0, 0))
+        # self.space.add(constraint)
+
+        # # add some component
+        # rpos = self.rocket.body.position + Vec2d(-20, 0)
+        # rect = Rectangle(self.space, *rpos, 10, 10)
+        # self.add_object(rect)
+        # constraint = pymunk.PinJoint(self.rocket.body, rect.body, (-20, 0), (0, 0))
+        # self.space.add(constraint)
 
     # update the physics of the game and each object
     def update_physics(self):
