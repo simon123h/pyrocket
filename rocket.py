@@ -98,14 +98,14 @@ class Rocket(Poly):
         h = self.h
         w = self.w
         fins = [(-w/2, -h/2.1), (-w*1.4, -h/2.1), (-w/2, -h/5), (-w/2, -h/2.1)]
-        fins = [pymunk.Vec2d(p).rotated(self.body.angle) +
+        fins = [pymunk.Vec2d(*p).rotated(self.body.angle) +
                 self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = game.pos2screen(p)
         pygame.draw.polygon(game.screen, pygame.Color(*self.color), fins)
         pygame.draw.lines(game.screen, pygame.Color("black"), False, fins, 2)
         fins = [(w/2, -h/2.1), (w*1.4, -h/2.1), (w/2, -h/5), (w/2, -h/2.1)]
-        fins = [pymunk.Vec2d(p).rotated(self.body.angle) +
+        fins = [pymunk.Vec2d(*p).rotated(self.body.angle) +
                 self.body.position for p in fins]
         for i, p in enumerate(fins):
             fins[i] = game.pos2screen(p)
@@ -121,7 +121,7 @@ class Rocket(Poly):
                 (-w/2, 0.47*h), (-w*1.5, 0.47*h), (-w/2, 0.5*h),
                 (+w/2, 0.5*h), (+w*1.5, 0.47*h), (+w/2, 0.47*h)
             ]
-            airbs = [pymunk.Vec2d(p).rotated(self.body.angle) +
+            airbs = [pymunk.Vec2d(*p).rotated(self.body.angle) +
                      self.body.position for p in airbs]
             for i, p in enumerate(airbs):
                 airbs[i] = game.pos2screen(p)
