@@ -3,3 +3,4 @@ __pycache__
 out
 *.png
 *.mp4
+!sample.png
