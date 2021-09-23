@@ -2,7 +2,7 @@
 
 A 2d self-landing rocket simulation written in Python.
 
-![](sample.png)
+![](res/sample.png)
 
 ## Requirements
 
