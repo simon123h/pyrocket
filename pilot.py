@@ -102,18 +102,35 @@ class Autopilot(Pilot):
                 engine.set_thrust(thrust)
 
         if self.sas_mode == "land":
-            critical_velocity = 10
-            if velocity.y > critical_velocity:
-                factor = 0
-            elif velocity.y < -critical_velocity:
-                factor = rocket.h / position.y * \
-                    abs(velocity.y) / critical_velocity * 0.3
+            # thrust control
+
+            h = position.y - rocket.h / 1.9  # target height
+            v = velocity.y
+            m = rocket.mass
+            g = abs(rocket.space.gravity[1])
+
+            # calculate the necessary thrust for landing
+            thrust = 2 * v**2 * m / h + g
+            # angle correction for tilted thrust vector
+            thrust *= min(1. / math.cos(engine.angle + angle), 3)
+            # safety factor: costs fuel, but makes the landing more gentle
+            thrust *= 2
+
+            # no thrust if going upwards of if thrust would be too low
+            if v > 0 or (thrust < engine.MIN_THRUST and not engine.ignited):
+                thrust = 0
+                engine.ignited = False
             else:
-                factor = 0.5
-            if position.y < rocket.h / 1.7:
+                engine.ignited = True
+
+            # set the thrust
+            engine.set_thrust(thrust)
+
+            # kill thrust when too low
+            if position.y < rocket.h / 1.8:
                 engine.ignited = False
                 self.sas_mode = "stabilize"
-            engine.set_thrust(factor * engine.thrust)
+            # enable airbrakes
             rocket.airbrakes_enabled = True
         else:
             rocket.airbrakes_enabled = False

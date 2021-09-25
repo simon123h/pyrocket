@@ -8,8 +8,8 @@ class Engine():
         # the thrust of the engine
         self.thrust = 0
         self.ignited = False
-        self.MAX_THRUST = 1e9
-        self.MIN_THRUST = 0
+        self.MAX_THRUST = 1e5
+        self.MIN_THRUST = 1e3
         self.MAX_THRUST_CHANGE = 1e9
 
         # the angle of the thrust vector
