@@ -68,6 +68,7 @@ class Autopilot(Pilot):
         angle = telemetry["angle"]
         velocity = telemetry["velocity"]
         angular_velocity = telemetry["angular_velocity"]
+        velocity_angle = math.atan2(velocity.x, -velocity.y)
 
         # how aggressive is SAS?
         sas_aggr = dt * 120.
@@ -81,21 +82,22 @@ class Autopilot(Pilot):
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
             # cancel rocket angle and lateral velocity
-            target_angle = max(min(0.001*velocity.x, 0.2), -0.2)
+            target_angle = max(min(0.001*velocity.x, 0.4), -0.4)
+            if abs(velocity.x) > 500:
+                target_angle = velocity_angle
             weight = min(abs(velocity.x), 300)
-            thrust_angle = -0.1*(angle-target_angle) * sas_aggr * weight
+            thrust_angle = -0.05*(angle-target_angle) * sas_aggr * weight
             # cancel angular velocity
             thrust_angle -= 0.2*angular_velocity
             # apply thrust_angle to engine
             engine.set_angle(thrust_angle)
 
             # control engine thrust
-            if self.sas_mode in ["hover", "land"]:
+            if self.sas_mode == "hover":
                 # set TWR = 1
                 thrust = rocket.mass * abs(rocket.space.gravity[1])
                 # cancel vertical velocity
-                if self.sas_mode == "hover":
-                    thrust -= 10 * rocket.mass * velocity.y * sas_aggr
+                thrust -= 10 * rocket.mass * velocity.y * sas_aggr
                 # scale thrust to vertical component
                 thrust /= max(abs(math.cos(engine.angle - angle)), 0.5)
                 # apply thrust to engine
@@ -112,9 +114,10 @@ class Autopilot(Pilot):
             # calculate the necessary thrust for landing
             thrust = 2 * v**2 * m / h + g
             # angle correction for tilted thrust vector
-            thrust *= min(1. / math.cos(engine.angle + angle), 3)
+            thrust *= min(1. / math.cos(engine.angle - angle), 2)
             # safety factor: costs fuel, but makes the landing more gentle
-            thrust *= 2
+            thrust *= 1.1
+            thrust += 500
 
             # no thrust if going upwards of if thrust would be too low
             if v > 0 or (thrust < engine.MIN_THRUST and not engine.ignited):
