@@ -77,7 +77,7 @@ class Autopilot(Pilot):
         # keep the rocket stable by cancelling angular velocity
         if self.sas_mode == "assist":
             # slowly cancel angular angular velocity
-            engine.increase_angle(-0.4*angular_velocity)
+            engine.increase_angle(-0.1*angular_velocity)
 
         # cancel rocket angle and lateral velocity
         if self.sas_mode in ["hover", "land", "stabilize"]:
