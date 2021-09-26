@@ -5,6 +5,7 @@ import pymunk
 from pymunk import Vec2d
 from objects import Wall, Ball, Rectangle
 from rocket import Rocket
+from tests import ALL_TESTS
 
 
 class RocketGame():
@@ -49,6 +50,9 @@ class RocketGame():
                 Wall(self.space, Vec2d(-1e9, 2*n), Vec2d(1e9, 2*n)))
         # add the rocket
         self.add_new_rocket()
+
+        # storage for a unit test, if performing a test
+        self.test = None
 
     # add an object to the game and return it
     def add_object(self, obj):
@@ -113,6 +117,15 @@ class RocketGame():
                 self.add_new_rocket()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.run_physics = not self.run_physics
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_t:
+                if self.test is None:
+                    self.run_tests()
+        # handle unit tests
+        if self.test is not None:
+            if self.test.is_finished():
+                self.test = self.test.next_test
+                if self.test is not None:
+                    self.test.start(self)
 
         # update rocket controls
         self.rocket.handle_controls(self)
@@ -198,3 +211,9 @@ R - restart
             return f"{v:,.{precision}f}m/s"
         if abs(v) > 1e3:
             return f"{v/1e3:,.{precision}f}km/s"
+
+    # Performs landing tests for different scenarios and measures how well the rocket performs.
+    def run_tests(self):
+        for n in range(len(ALL_TESTS)-1):
+            ALL_TESTS[n].next_test = ALL_TESTS[n+1]
+        ALL_TESTS[0].start(self)

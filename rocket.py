@@ -31,7 +31,6 @@ class Rocket(Poly):
 
         # the pilot / autopilot system
         self.pilot = Autopilot(self)
-        self.sas_mode = "OFF"
 
         # statistics
         self.stats = {"fuel_used": 0}
@@ -63,7 +62,7 @@ class Rocket(Poly):
         # where is drag force applied?
         drag_fp = pymunk.Vec2d(0, -5*self.h)
         if self.airbrakes_enabled:
-            drag_fp = -0.3*drag_fp
+            drag_fp *= -0.3
             drag_force *= 1
         self.body.apply_force_at_local_point(
             drag_force.rotated(-self.body.angle), drag_fp)
