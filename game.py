@@ -26,6 +26,7 @@ class RocketGame():
         self.screen = pygame.display.set_mode(
             (self.FRAME_WIDTH, self.FRAME_HEIGHT))
         self.clock = pygame.time.Clock()
+        self.time = 0
 
         # game state variables
         self.running = True
@@ -34,7 +35,6 @@ class RocketGame():
         # physics stuff
         self.space = pymunk.Space()
         self.space.gravity = 0.0, -self.GRAVITY
-        self.ntimesteps = 2  # number of timesteps per frame
 
         # game objects
         self.objects = []
@@ -98,6 +98,8 @@ class RocketGame():
                 obj.update_forces()
             # perform time steps
             self.space.step(self.DT)
+            # update time
+            self.time += self.DT
 
     # process the controls of the game (events, pressed keys, etc.)
     def handle_controls(self):

@@ -36,7 +36,7 @@ class Test():
         rocket.pilot.sas_mode = self.sas_mode
         # measure stats before
         self.stats_before = rocket.stats.copy()
-        self.t_before = self.game.clock.get_time()
+        self.t_before = self.game.time
 
     def is_finished(self):
         # check if the rocket landed
@@ -47,7 +47,7 @@ class Test():
             return False
         # measure stats after
         self.stats_after = rocket.stats.copy()
-        self.t_after = self.game.clock.get_time()
+        self.t_after = self.game.time
         # display test results
         self.display_results()
         print("Test finished.\n")
