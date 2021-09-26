@@ -115,13 +115,11 @@ class Autopilot(Pilot):
             # calculate the necessary thrust for landing
             thrust = 2 * v**2 * m / h + g
             # scale thrust to vertical component
-            thrust *= min(1. / abs(math.cos(engine.angle - angle)), 2)
+            thrust *= min(1. / abs(math.cos(engine.angle - angle)), 4)
             # safety factor: costs fuel, but makes the landing more gentle
-            thrust *= 1.4
-            # thrust += 500
+            thrust *= 0.75
             # no thrust if going upwards of if thrust would be too low
-            if v > 0 or (thrust < engine.MIN_THRUST and not engine.ignited):
-                thrust = 0
+            if v > 0 or thrust < engine.MIN_THRUST:
                 engine.ignited = False
             else:
                 engine.ignited = True
