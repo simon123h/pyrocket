@@ -82,8 +82,8 @@ class Autopilot(Pilot):
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
             # cancel rocket angle and lateral velocity
-            target_angle = max(min(0.001*velocity.x, 0.2), -0.2)
-            if abs(velocity.x) > 500:
+            target_angle = max(min(0.001*velocity.x, 0.3), -0.3)
+            if abs(velocity.x) > 400:
                 target_angle = velocity_angle
             weight = min(abs(velocity.x), 300)
             thrust_angle = -0.05*(angle-target_angle) * sas_aggr * weight
@@ -114,10 +114,10 @@ class Autopilot(Pilot):
             # calculate the necessary thrust for landing
             thrust = 2 * v**2 * m / h + g
             # angle correction for tilted thrust vector
-            thrust *= min(1. / math.cos(engine.angle - angle), 2)
+            thrust *= min(1. / abs(math.cos(engine.angle - angle)), 2)
             # safety factor: costs fuel, but makes the landing more gentle
-            thrust *= 1.1
-            thrust += 500
+            thrust *= 1.4
+            # thrust += 500
 
             # no thrust if going upwards of if thrust would be too low
             if v > 0 or (thrust < engine.MIN_THRUST and not engine.ignited):

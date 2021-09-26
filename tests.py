@@ -100,7 +100,7 @@ test.rocket_angular_velocity = 100
 ALL_TESTS.append(test)
 
 test = Test()
-test.rocket_position = pymunk.Vec2d(0, 5000)
+test.rocket_position = pymunk.Vec2d(0, 6000)
 test.rocket_velocity = pymunk.Vec2d(0, -500)
 test.rocket_angular_velocity = 10
 ALL_TESTS.append(test)
