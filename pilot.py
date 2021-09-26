@@ -70,71 +70,69 @@ class Autopilot(Pilot):
         angular_velocity = telemetry["angular_velocity"]
         velocity_angle = math.atan2(velocity.x, -velocity.y)
 
-        # how aggressive is SAS?
-        sas_aggr = dt * 120.
-
+        # no stability assist
         if self.sas_mode == "OFF":
             pass
 
+        # keep the rocket stable by cancelling angular velocity
         if self.sas_mode == "assist":
             # slowly cancel angular angular velocity
-            engine.increase_angle(-0.2*angular_velocity)
+            engine.increase_angle(-0.4*angular_velocity)
 
+        # cancel rocket angle and lateral velocity
         if self.sas_mode in ["hover", "land", "stabilize"]:
-            # cancel rocket angle and lateral velocity
-            target_angle = max(min(0.001*velocity.x, 0.3), -0.3)
-            if abs(velocity.x) > 400:
-                target_angle = velocity_angle
-            weight = min(abs(velocity.x), 300)
-            thrust_angle = -0.05*(angle-target_angle) * sas_aggr * weight
+            # get target direction of rocket from a superposition of gravity
+            # force and momentum vector (this cancels horizontal velocity)
+            gravity = rocket.space.gravity
+            momentum = rocket.body.velocity
+            target_direction = 1e0 * momentum + gravity
+            target_angle = math.atan2(target_direction.x, -target_direction.y)
+            # set thrust angle so that the rocket approaches target direction
+            thrust_angle = target_angle - angle
             # cancel angular velocity
-            thrust_angle -= 0.2*angular_velocity
+            thrust_angle -= 0.4*angular_velocity
             # apply thrust_angle to engine
             engine.set_angle(thrust_angle)
 
-            # control engine thrust
-            if self.sas_mode == "hover":
-                # set TWR = 1
-                thrust = rocket.mass * abs(rocket.space.gravity[1])
-                # cancel vertical velocity
-                thrust -= 10 * rocket.mass * velocity.y * sas_aggr
-                # scale thrust to vertical component
-                thrust /= max(abs(math.cos(engine.angle - angle)), 0.5)
-                # apply thrust to engine
-                engine.set_thrust(thrust)
+        # control engine thrust for hovering (no vertical velocity)
+        if self.sas_mode == "hover":
+            # set TWR = 1
+            thrust = rocket.mass * abs(rocket.space.gravity[1])
+            # cancel vertical velocity
+            thrust -= rocket.mass * velocity.y
+            # scale thrust to vertical component
+            thrust *= min(1. / abs(math.cos(engine.angle - angle)), 2)
+            # apply thrust to engine
+            engine.set_thrust(thrust)
 
+        # control thrust for landing
         if self.sas_mode == "land":
-            # thrust control
-
+            # some abbreviations
             h = position.y - rocket.h / 1.9  # target height
             v = velocity.y
             m = rocket.mass
             g = abs(rocket.space.gravity[1])
-
             # calculate the necessary thrust for landing
             thrust = 2 * v**2 * m / h + g
-            # angle correction for tilted thrust vector
+            # scale thrust to vertical component
             thrust *= min(1. / abs(math.cos(engine.angle - angle)), 2)
             # safety factor: costs fuel, but makes the landing more gentle
             thrust *= 1.4
             # thrust += 500
-
             # no thrust if going upwards of if thrust would be too low
             if v > 0 or (thrust < engine.MIN_THRUST and not engine.ignited):
                 thrust = 0
                 engine.ignited = False
             else:
                 engine.ignited = True
-
             # set the thrust
             engine.set_thrust(thrust)
-
-            # kill thrust when too low
+            # enable airbrakes
+            rocket.airbrakes_enabled = True
+            # kill thrust and stop landing mode when too low
             if position.y < rocket.h / 1.8:
                 engine.ignited = False
                 self.sas_mode = "OFF"
-            # enable airbrakes
-            rocket.airbrakes_enabled = True
         else:
             rocket.airbrakes_enabled = False
 
