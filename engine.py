@@ -6,11 +6,13 @@ class Engine():
     def __init__(self):
 
         # the thrust of the engine
-        self.thrust = 0
         self.ignited = False
-        self.MAX_THRUST = 1e5
+        self.MAX_THRUST = 1e4
         self.MIN_THRUST = 1e3
         self.MAX_THRUST_CHANGE = 1e9
+        self.thrust = self.MAX_THRUST
+        # amout of fuel consumed per thrust generated
+        self.FUEL_CONSUMPTION = 1
 
         # the angle of the thrust vector
         self.angle = 0
@@ -21,15 +23,21 @@ class Engine():
         self.flame_img = pygame.image.load('res/flame.png').convert_alpha()
 
     def set_thrust(self, thrust):
-        # TODO: mind MAX_CHANGE
-        self.thrust = min(max(thrust, self.MIN_THRUST), self.MAX_THRUST)
+        thrust = min(thrust, self.thrust + self.MAX_THRUST_CHANGE)
+        thrust = max(thrust, self.thrust - self.MAX_THRUST_CHANGE)
+        thrust = min(thrust, self.MAX_THRUST)
+        thrust = max(thrust, self.MIN_THRUST)
+        self.thrust = thrust
 
     def increase_thrust(self, dthrust):
         self.set_thrust(self.thrust + dthrust)
 
     def set_angle(self, angle):
-        # TODO: mind MAX_CHANGE
-        self.angle = min(max(angle, -self.MAX_ANGLE), self.MAX_ANGLE)
+        angle = min(angle, self.angle + self.MAX_ANGLE_CHANGE)
+        angle = max(angle, self.angle - self.MAX_ANGLE_CHANGE)
+        angle = min(angle, self.MAX_ANGLE)
+        angle = max(angle, -self.MAX_ANGLE)
+        self.angle = angle
 
     def increase_angle(self, dangle):
         self.set_angle(self.angle + dangle)
