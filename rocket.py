@@ -28,11 +28,13 @@ class Rocket(Poly):
         # the rocket engine
         self.engine = Engine()
         self.engine_pos = pymunk.Vec2d(0, -h/2)  # position of the engine
-        self.engine.set_thrust(2 * self.mass * abs(self.space.gravity[1]))
 
         # the pilot / autopilot system
         self.pilot = Autopilot(self)
         self.sas_mode = "OFF"
+
+        # statistics
+        self.stats = {"fuel_used": 0}
 
     # apply the physical forces to the rocket
     def update_forces(self):
@@ -43,6 +45,8 @@ class Rocket(Poly):
         if self.engine.ignited:
             self.body.apply_force_at_local_point(
                 thrust_force, self.engine_pos)
+            self.stats["fuel_used"] += self.engine.thrust * \
+                self.engine.FUEL_CONSUMPTION
 
     # the aerodynamic drag
     def update_drag(self):

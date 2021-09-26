@@ -82,7 +82,7 @@ class Autopilot(Pilot):
 
         if self.sas_mode in ["hover", "land", "stabilize"]:
             # cancel rocket angle and lateral velocity
-            target_angle = max(min(0.001*velocity.x, 0.4), -0.4)
+            target_angle = max(min(0.001*velocity.x, 0.2), -0.2)
             if abs(velocity.x) > 500:
                 target_angle = velocity_angle
             weight = min(abs(velocity.x), 300)
@@ -132,7 +132,7 @@ class Autopilot(Pilot):
             # kill thrust when too low
             if position.y < rocket.h / 1.8:
                 engine.ignited = False
-                self.sas_mode = "stabilize"
+                self.sas_mode = "OFF"
             # enable airbrakes
             rocket.airbrakes_enabled = True
         else:
