@@ -119,6 +119,8 @@ class RocketGame():
                 self.add_new_rocket()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.run_physics = not self.run_physics
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+                self.rocket.airbrakes_enabled = not self.rocket.airbrakes_enabled
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_t:
                 if self.test is None:
                     self.run_tests()
@@ -176,6 +178,7 @@ Left/Right - thrust vector control
 space - start/stop engine
 0-4 - switch SAS mode
 mouse - add obstacle
+A - airbrakes
 P - pause
 R - restart
 T - run tests

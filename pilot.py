@@ -130,9 +130,8 @@ class Autopilot(Pilot):
             # kill thrust and stop landing mode when too low
             if position.y < rocket.h / 1.8:
                 engine.ignited = False
+                rocket.airbrakes_enabled = False
                 self.sas_mode = "OFF"
-        else:
-            rocket.airbrakes_enabled = False
 
     def trajectory(self):
         # TODO: estimate the trajectory of the rocket
