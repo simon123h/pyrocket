@@ -43,7 +43,9 @@ class Test():
         rocket = self.game.rocket
         h = rocket.body.position.y
         v = rocket.body.velocity
-        if (h > 200 and not self.ignore_height) or abs(v.x) > .1 or abs(v.y) > .1:
+        if (h > 200 and not self.ignore_height):
+            return False
+        if abs(v.x) > .2 or abs(v.y) > .2:
             return False
         # measure stats after
         self.stats_after = rocket.stats.copy()
