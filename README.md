@@ -32,8 +32,10 @@ to start the simulation.
 | Space      |         Start/Stop engine          |
 | 0-9        | Switch stability assist mode (SAS) |
 | Mouse      |          add an obstacle           |
+| A          |          toggle airbrakes          |
 | P          |               pause                |
 | R          |         restart the rocket         |
+| T          |          run landing tests         |
 
 ## Instructions
 
