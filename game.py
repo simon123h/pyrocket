@@ -136,22 +136,28 @@ class RocketGame():
             obj.draw(self)
         # Display some text
         font = pygame.font.Font(None, 24)
-        text = """Thrust: {:f}
-TWR: {:f}
-Height: {:.1e}
-Velocity: {:.1e}
-SAS: {:s}
+
+        thrust = self.rocket.engine.thrust/self.rocket.engine.MAX_THRUST
+        twr = self.rocket.twr()
+        h = self.length_unit(self.rocket.body.position.y)
+        v = self.velocity_unit(self.rocket.body.velocity.y)
+        sas = self.rocket.pilot.sas_mode
+        text = f"""Thrust: {thrust:3.0%}
+TWR: {twr:.2f}
+Height: {h}
+Velocity: {v}
+SAS: {sas}
 
 Controls:
 ---------
 Up/Down - throttle
 Left/Right - thrust vector control
 space - start/stop engine
-0-9 - switch SAS mode
+0-4 - switch SAS mode
 mouse - add obstacle
 P - pause
 R - restart
-""".format(self.rocket.engine.thrust, self.rocket.twr(), self.rocket.body.position.y, self.rocket.body.velocity.y, self.rocket.pilot.sas_mode)
+"""
         y = 5
         for line in text.splitlines():
             text = font.render(line, True, pygame.Color("black"))
@@ -175,3 +181,20 @@ R - restart
             x += self.rocket.body.position.x
             y += self.rocket.body.position.y
         return Vec2d(x, y)
+
+    # convert lengthlength_unitto string with units
+    def length_unit(self, h, precision=1):
+        if abs(h) < 1e3:
+            return f"{h:,.{precision}f}m"
+        ly = 9.461e15
+        if abs(h) < 0.1*ly:
+            return f"{h/1e3:,.{precision}f}km"
+        else:
+            return f"{h/ly:,.{precision}f}ly"
+
+    # convert velocity to string with units
+    def velocity_unit(self, v, precision=1):
+        if abs(v) < 1e3:
+            return f"{v:,.{precision}f}m/s"
+        if abs(v) > 1e3:
+            return f"{v/1e3:,.{precision}f}km/s"
