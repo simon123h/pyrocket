@@ -85,6 +85,8 @@ class Autopilot(Pilot):
             # force and momentum vector (this cancels horizontal velocity)
             gravity = rocket.space.gravity
             momentum = rocket.body.velocity
+            if self.sas_mode == "stabilize":
+                momentum *= 0
             target_direction = 1e0 * momentum + gravity
             target_angle = math.atan2(target_direction.x, -target_direction.y)
             # set thrust angle so that the rocket approaches target direction
