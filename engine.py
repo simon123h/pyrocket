@@ -7,7 +7,7 @@ class Engine():
 
         # the thrust of the engine
         self.ignited = False
-        self.MAX_THRUST = 1e4
+        self.MAX_THRUST = 1.2e4
         self.MIN_THRUST = 1e3
         self.MAX_THRUST_CHANGE = 1e9
         self.thrust = self.MAX_THRUST

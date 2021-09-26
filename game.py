@@ -24,7 +24,7 @@ class RocketGame():
 
         # screen and runtime
         self.screen = pygame.display.set_mode(
-            (self.FRAME_WIDTH, self.FRAME_HEIGHT))
+            (self.FRAME_WIDTH, self.FRAME_HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.time = 0
 
@@ -122,6 +122,12 @@ class RocketGame():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_t:
                 if self.test is None:
                     self.run_tests()
+            elif event.type == pygame.VIDEORESIZE:
+                self.FRAME_WIDTH = event.w
+                self.FRAME_HEIGHT = event.h
+                self.screen = pygame.display.set_mode(
+                    (self.FRAME_WIDTH, self.FRAME_HEIGHT), pygame.RESIZABLE)
+
         # handle unit tests
         if self.test is not None:
             if self.test.is_finished():
@@ -172,6 +178,7 @@ space - start/stop engine
 mouse - add obstacle
 P - pause
 R - restart
+T - run tests
 """
         y = 5
         for line in text.splitlines():
