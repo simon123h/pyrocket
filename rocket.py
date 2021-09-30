@@ -80,7 +80,7 @@ class Rocket(Poly):
         data["angular_velocity"] = self.body.angular_velocity * self.noise()
         return data
 
-    def noise(self, amplitude=1e-2):
+    def noise(self, amplitude=0):
         return 1 + amplitude * (2*random.random() - 1)
 
     # control the rocket using the pilot / autopilot
