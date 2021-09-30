@@ -1,4 +1,5 @@
 import math
+import random
 import pygame
 import pymunk
 from objects import Poly
@@ -72,12 +73,15 @@ class Rocket(Poly):
     # get telemetry data, e.g., for autopilot
     def get_telemetry(self):
         data = {}
-        data["position"] = self.body.position
-        data["velocity"] = self.body.velocity
+        data["position"] = self.body.position * self.noise()
+        data["velocity"] = self.body.velocity * self.noise()
         angle = (self.body.angle + math.pi) % (2 * math.pi) - math.pi
-        data["angle"] = angle
-        data["angular_velocity"] = self.body.angular_velocity
+        data["angle"] = angle * self.noise()
+        data["angular_velocity"] = self.body.angular_velocity * self.noise()
         return data
+
+    def noise(self, amplitude=1e-2):
+        return 1 + amplitude * (2*random.random() - 1)
 
     # control the rocket using the pilot / autopilot
     def handle_controls(self, game):

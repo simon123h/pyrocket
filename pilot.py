@@ -29,7 +29,7 @@ class Autopilot(Pilot):
     def handle_controls(self, game):
 
         # apply the auto controls
-        self.auto_constrols(game)
+        self.auto_controls(game)
 
         # apply the user controls
         for event in game.events:
@@ -57,7 +57,7 @@ class Autopilot(Pilot):
             self.rocket.body.angle -= 0.002 * servo
             self.rocket.engine.angle -= 0.003 * servo
 
-    def auto_constrols(self, game):
+    def auto_controls(self, game):
         dt = game.DT
         rocket = self.rocket
         telemetry = rocket.get_telemetry()
@@ -68,7 +68,6 @@ class Autopilot(Pilot):
         angle = telemetry["angle"]
         velocity = telemetry["velocity"]
         angular_velocity = telemetry["angular_velocity"]
-        velocity_angle = math.atan2(velocity.x, -velocity.y)
 
         # no stability assist
         if self.sas_mode == "OFF":
@@ -84,7 +83,7 @@ class Autopilot(Pilot):
             # get target direction of rocket from a superposition of gravity
             # force and momentum vector (this cancels horizontal velocity)
             gravity = rocket.space.gravity
-            momentum = rocket.body.velocity
+            momentum = velocity
             if self.sas_mode == "stabilize":
                 momentum *= 0
             target_direction = 1e0 * momentum + gravity
