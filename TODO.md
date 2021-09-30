@@ -3,7 +3,6 @@
 
 - add retrograde SAS mode or generally prograde / retrograde etc.
 - Encapsulate pilot steering controls
-- add noise (on the telemetry data)
 - add wind
 - Rocket consists of components
 - Reaction Wheel
