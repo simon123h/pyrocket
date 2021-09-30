@@ -36,7 +36,7 @@ class Object():
 
 class Ball(Object):
 
-    def __init__(self, space, x, y, radius=10, mass=10):
+    def __init__(self, space, x, y, radius=10, mass=3e5):
         super().__init__()
         moment = mass
         self.body = pymunk.Body(mass, moment)

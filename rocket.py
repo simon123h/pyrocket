@@ -59,7 +59,7 @@ class Rocket(Poly):
         A = A * self.h**2 + (1-A) * self.w**2
         A *= self.drag_coeff
         # calculate and apply drag force
-        drag_force = super()._drag_formula(A, v)
+        drag_force = super()._drag_formula(A, v, coeff=3e1)
         # where is drag force applied?
         drag_fp = pymunk.Vec2d(0, -5*self.h)
         if self.airbrakes_enabled:
