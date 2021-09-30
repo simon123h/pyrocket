@@ -10,7 +10,7 @@ class Engine():
         self.ignited = False
         self.MAX_THRUST = 3.6e8
         self.MIN_THRUST = 3.6e7
-        self.MAX_THRUST_CHANGE = 1e9
+        self.MAX_THRUST_CHANGE = 1e7
         self.thrust = self.MAX_THRUST
         # amout of fuel consumed per thrust generated
         self.FUEL_CONSUMPTION = 1
@@ -42,6 +42,12 @@ class Engine():
 
     def increase_angle(self, dangle):
         self.set_angle(self.angle + dangle)
+
+    def ignite(self):
+        self.ignited = True
+
+    def cut_off(self):
+        self.ignited = False
 
     def draw(self, game, pos, global_angle):
         if not self.ignited:

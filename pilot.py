@@ -121,9 +121,9 @@ class Autopilot(Pilot):
             thrust *= 0.75
             # no thrust if going upwards of if thrust would be too low
             if v > 0 or thrust < engine.MIN_THRUST:
-                engine.ignited = False
+                engine.cut_off()
             else:
-                engine.ignited = True
+                engine.ignite()
             # set the thrust
             engine.set_thrust(thrust)
             # enable airbrakes
