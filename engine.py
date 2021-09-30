@@ -1,14 +1,15 @@
 import math
 import pygame
 
+
 class Engine():
 
     def __init__(self):
 
         # the thrust of the engine
         self.ignited = False
-        self.MAX_THRUST = 1.2e4
-        self.MIN_THRUST = 1e3
+        self.MAX_THRUST = 3.6e8
+        self.MIN_THRUST = 3.6e7
         self.MAX_THRUST_CHANGE = 1e9
         self.thrust = self.MAX_THRUST
         # amout of fuel consumed per thrust generated
@@ -45,7 +46,7 @@ class Engine():
     def draw(self, game, pos, global_angle):
         if not self.ignited:
             return
-        ll = 0.2 * math.sqrt(self.thrust)
+        ll = 0.2 * math.sqrt(self.thrust/3e4)
         angle = global_angle - self.angle
         p1 = game.pos2screen(pos)
         # thrust_end = pos + ll * \

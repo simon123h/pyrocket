@@ -8,5 +8,4 @@
 - Reaction Wheel
 - Better plot of engine
 - Flying / Landing towards target by estimating parabola
-- SI units
 - Minimap

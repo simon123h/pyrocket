@@ -47,9 +47,9 @@ class Autopilot(Pilot):
 
         # handle pressed keys
         if game.pressed_keys[pygame.K_UP]:
-            self.rocket.engine.increase_thrust(100*servo)
+            self.rocket.engine.increase_thrust(3e6*servo)
         if game.pressed_keys[pygame.K_DOWN]:
-            self.rocket.engine.increase_thrust(-100*servo)
+            self.rocket.engine.increase_thrust(-3e6*servo)
         if game.pressed_keys[pygame.K_LEFT]:
             self.rocket.body.angle += 0.002 * servo
             self.rocket.engine.angle += 0.003 * servo

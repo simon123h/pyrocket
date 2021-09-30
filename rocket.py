@@ -9,7 +9,7 @@ from pilot import Autopilot
 
 class Rocket(Poly):
 
-    def __init__(self, space, x, y, w=15, h=150, mass=10):
+    def __init__(self, space, x, y, w=15, h=150, mass=300e3):
         points = [(-w/2, -h/2), (w/2, -h/2),
                   (w/2, h/2), (0, h/1.5), (-w/2, h/2)]
         super().__init__(space, x, y, points, mass)
