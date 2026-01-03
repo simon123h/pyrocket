@@ -26,8 +26,8 @@ jobs:
 
       - name: Build with Vite
         run: npm run build
-        # env:
-        #   VITE_BASE_PATH: "pyrocket"
+        env:
+          VITE_BASE_PATH: "pyrocket"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
