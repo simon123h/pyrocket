@@ -21,7 +21,7 @@ class Engine():
         self.MAX_ANGLE_CHANGE = 1e9
 
         # graphics
-        self.flame_img = pygame.image.load('res/flame.png').convert_alpha()
+        self.flame_img = pygame.image.load('public/res/flame.png').convert_alpha()
 
     def set_thrust(self, thrust):
         thrust = min(thrust, self.thrust + self.MAX_THRUST_CHANGE)

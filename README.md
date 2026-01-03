@@ -18,7 +18,7 @@ pip3 install --user pymunk
 Run
 
 ```python3
-python3 main.py
+python3 python/main.py
 ```
 
 to start the simulation.
