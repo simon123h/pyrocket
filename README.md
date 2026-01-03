@@ -35,7 +35,7 @@ to start the simulation.
 | A          |          toggle airbrakes          |
 | P          |               pause                |
 | R          |         restart the rocket         |
-| T          |          run landing tests         |
+| T          |         run landing tests          |
 
 ## Instructions
 
