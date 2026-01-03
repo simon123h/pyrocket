@@ -9,8 +9,8 @@ export class RocketGame implements IGame {
   readonly FRAME_WIDTH = 1600;
   readonly FRAME_HEIGHT = 900;
   readonly GRAVITY = 600;
-  readonly DT = 1 / 1000;
   readonly FPS = 50;
+  readonly DT = 1 / this.FPS;
 
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -49,11 +49,8 @@ export class RocketGame implements IGame {
 
     this.engine = Matter.Engine.create();
     this.world = this.engine.world;
-    this.world.gravity.y = 1; // Matter.js gravity is a bit different, we'll scale it
-    this.world.gravity.scale = (0.001 * this.GRAVITY) / 9.81; // Rough approximation
-    // Actually, Pymunk gravity was 600. Matter.js default is 1.
-    // Let's set it to 0 and apply gravity manually or use scale.
-    this.world.gravity.y = this.GRAVITY / 100; // Matter.js units are different
+    this.engine.gravity.y = -1;
+    this.engine.gravity.scale = (1 * this.GRAVITY) / 9.81;
 
     this.add_ground();
     this.add_new_rocket();
@@ -92,8 +89,8 @@ export class RocketGame implements IGame {
     if (this.rocket) {
       this.remove_object(this.rocket);
     }
-    this.rocket = new Rocket(this.world, 0, 100);
-    this.rocket.space = { gravity: { x: 0, y: this.GRAVITY } };
+    this.rocket = new Rocket(this.world, 0, 200);
+    this.rocket.space = { gravity: { x: 0, y: -this.GRAVITY } };
     this.add_object(this.rocket);
   }
 
@@ -115,10 +112,10 @@ export class RocketGame implements IGame {
   update_physics(): void {
     if (this.run_physics) {
       for (const obj of this.objects) {
-        obj.update_drag();
+        // obj.update_drag();
         obj.update_forces();
       }
-      Matter.Engine.update(this.engine, this.DT * 1000);
+      Matter.Engine.update(this.engine, this.DT);
       this.time += this.DT;
     }
   }

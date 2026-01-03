@@ -89,7 +89,7 @@ export const ALL_TESTS: Test[] = [];
 {
   const t = new Test();
   t.rocket_position = { x: 0, y: 6000 };
-  t.rocket_velocity = { x: 1000, y: 0 };
+  t.rocket_velocity = { x: 100, y: 0 };
   t.rocket_angle = Math.PI / 2;
   ALL_TESTS.push(t);
 }

@@ -6,9 +6,9 @@ import { Game } from "./objects";
  */
 export class Engine {
   ignited: boolean = false;
-  readonly MAX_THRUST: number = 3.6e8;
-  readonly MIN_THRUST: number = 3.6e7;
-  readonly MAX_THRUST_CHANGE: number = 1e7;
+  readonly MAX_THRUST: number = 3.6e5;
+  readonly MIN_THRUST: number = 3.6e4;
+  readonly MAX_THRUST_CHANGE: number = 1e4;
   thrust: number = this.MAX_THRUST;
   readonly FUEL_CONSUMPTION: number = 1;
 
@@ -60,7 +60,7 @@ export class Engine {
       return;
     }
 
-    const ll = 0.2 * Math.sqrt(this.thrust / 3e4);
+    const ll = 0.2 * Math.sqrt(this.thrust / 3e1);
     const angle = global_angle - this.angle;
     const p1 = game.pos2screen(pos);
 

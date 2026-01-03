@@ -126,14 +126,15 @@ export class Wall extends GameObject {
  * Represents a polygon object.
  */
 export class Poly extends GameObject {
-  constructor(world: Matter.World, x: number, y: number, points: Matter.Vector[], mass: number = 10) {
+  constructor(world: Matter.World, x: number, y: number, points: Matter.Vector[], mass: number) {
     super();
     // Matter.Bodies.fromVertices needs the points to be centered
     this.body = Matter.Bodies.fromVertices(x, y, [points], {
       mass: mass,
-      friction: 0.8,
+      friction: 0.0, // TODO: reenable friction at some point
     });
     if (!this.body) {
+      console.warn("Matter.Bodies.fromVertices failed, falling back to rectangle. This will cause incorrect physics!");
       // Fallback if decomposition fails
       this.body = Matter.Bodies.rectangle(x, y, 10, 10, { mass });
     }

@@ -58,22 +58,24 @@ export class Autopilot extends Pilot {
     }
 
     if (game.pressed_keys["ArrowUp"]) {
-      this.rocket.engine.increase_thrust(3e6 * servo);
+      this.rocket.engine.increase_thrust(3000 * servo);
     }
+
     if (game.pressed_keys["ArrowDown"]) {
-      this.rocket.engine.increase_thrust(-3e6 * servo);
+      this.rocket.engine.increase_thrust(-3000 * servo);
     }
+
     if (game.pressed_keys["ArrowLeft"]) {
       if (this.rocket.body) {
         Matter.Body.setAngle(this.rocket.body, this.rocket.body.angle - 0.002 * servo);
       }
-      this.rocket.engine.angle += 0.003 * servo;
+      this.rocket.engine.angle += 0.0001 * servo;
     }
     if (game.pressed_keys["ArrowRight"]) {
       if (this.rocket.body) {
         Matter.Body.setAngle(this.rocket.body, this.rocket.body.angle + 0.002 * servo);
       }
-      this.rocket.engine.angle -= 0.003 * servo;
+      this.rocket.engine.angle -= 0.0001 * servo;
     }
   }
 

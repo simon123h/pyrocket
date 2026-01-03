@@ -19,13 +19,13 @@ export class Rocket extends Poly {
   stats: { fuel_used: number } = { fuel_used: 0 };
   space: { gravity: Matter.Vector };
 
-  constructor(world: Matter.World, x: number, y: number, w: number = 15, h: number = 150, mass: number = 300e3) {
+  constructor(world: Matter.World, x: number, y: number, w: number = 15, h: number = 150, mass: number = 300) {
     const points = [
-      { x: -w / 2, y: -h / 2 },
-      { x: w / 2, y: -h / 2 },
-      { x: w / 2, y: h / 2 },
-      { x: 0, y: h / 1.5 },
       { x: -w / 2, y: h / 2 },
+      { x: 0, y: h / 1.5 },
+      { x: w / 2, y: h / 2 },
+      { x: w / 2, y: -h / 2 },
+      { x: -w / 2, y: -h / 2 },
     ];
     super(world, x, y, points, mass);
     this.w = w;
@@ -53,6 +53,8 @@ export class Rocket extends Poly {
     if (this.engine.ignited) {
       const world_pos = Matter.Vector.add(this.body.position, Matter.Vector.rotate(this.engine_pos, this.body.angle));
       const world_force = Matter.Vector.rotate(thrust_force_local, this.body.angle);
+      console.log(this.body.position, world_pos, this.body.angle);
+      // console.log(world_force, world_pos, this.body.angle);
       Matter.Body.applyForce(this.body, world_pos, world_force);
       this.stats.fuel_used += this.engine.thrust * this.engine.FUEL_CONSUMPTION;
     }
