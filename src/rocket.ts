@@ -2,6 +2,7 @@ import Matter from "matter-js";
 import { Poly, Game } from "./objects";
 import { Engine } from "./engine";
 import { Autopilot } from "./pilot";
+import { RocketGame } from "./game";
 
 /**
  * Represents the rocket.
@@ -53,8 +54,6 @@ export class Rocket extends Poly {
     if (this.engine.ignited) {
       const world_pos = Matter.Vector.add(this.body.position, Matter.Vector.rotate(this.engine_pos, this.body.angle));
       const world_force = Matter.Vector.rotate(thrust_force_local, this.body.angle);
-      console.log(this.body.position, world_pos, this.body.angle);
-      // console.log(world_force, world_pos, this.body.angle);
       Matter.Body.applyForce(this.body, world_pos, world_force);
       this.stats.fuel_used += this.engine.thrust * this.engine.FUEL_CONSUMPTION;
     }
@@ -117,12 +116,7 @@ export class Rocket extends Poly {
     };
   }
 
-  handle_controls(game: {
-    events: { type: string; code: string }[];
-    pressed_keys: { [key: string]: boolean };
-    DT: number;
-    space: { gravity: Matter.Vector };
-  }): void {
+  handle_controls(game: RocketGame): void {
     this.pilot.handle_controls(game);
   }
 

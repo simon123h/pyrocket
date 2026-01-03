@@ -1,12 +1,6 @@
 import Matter from "matter-js";
 import { Rocket } from "./rocket";
-
-export interface GameState {
-  events: { type: string; code: string }[]; // We'll use a simplified event system
-  pressed_keys: { [key: string]: boolean };
-  DT: number;
-  space: { gravity: Matter.Vector };
-}
+import { RocketGame } from "./game";
 
 /**
  * Base class for a pilot or autopilot.
@@ -19,7 +13,7 @@ export class Pilot {
    * @param _game The current game state.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handle_controls(_game: GameState): void {}
+  handle_controls(_game: RocketGame): void {}
 }
 
 /**
@@ -35,7 +29,7 @@ export class Autopilot extends Pilot {
     Digit4: "land",
   };
 
-  handle_controls(game: GameState): void {
+  handle_controls(game: RocketGame): void {
     this.auto_controls(game);
 
     // User controls
@@ -69,17 +63,17 @@ export class Autopilot extends Pilot {
       if (this.rocket.body) {
         Matter.Body.setAngle(this.rocket.body, this.rocket.body.angle - 0.002 * servo);
       }
-      this.rocket.engine.angle += 0.0001 * servo;
+      this.rocket.engine.increase_angle(+0.0001 * servo);
     }
     if (game.pressed_keys["ArrowRight"]) {
       if (this.rocket.body) {
         Matter.Body.setAngle(this.rocket.body, this.rocket.body.angle + 0.002 * servo);
       }
-      this.rocket.engine.angle -= 0.0001 * servo;
+      this.rocket.engine.increase_angle(-0.0001 * servo);
     }
   }
 
-  auto_controls(game: GameState): void {
+  auto_controls(game: RocketGame): void {
     if (!this.rocket.body) {
       return;
     }
@@ -96,9 +90,9 @@ export class Autopilot extends Pilot {
     if (this.sas_mode === "OFF") {
       // Nothing
     } else if (this.sas_mode === "assist") {
-      engine.increase_angle(-0.1 * angular_velocity);
+      engine.increase_angle(-0.001 * angular_velocity);
     } else if (["hover", "land", "stabilize"].includes(this.sas_mode)) {
-      const gravity = game.space.gravity;
+      const gravity = game.engine.gravity;
       let momentum = velocity;
       if (this.sas_mode === "stabilize") {
         momentum = { x: 0, y: 0 };
@@ -107,12 +101,12 @@ export class Autopilot extends Pilot {
       const target_angle = Math.atan2(target_direction.x, -target_direction.y);
 
       let thrust_angle = target_angle - angle;
-      thrust_angle -= 0.4 * angular_velocity;
+      thrust_angle -= 0.04 * angular_velocity;
       engine.set_angle(thrust_angle);
     }
 
     if (this.sas_mode === "hover") {
-      const g = Matter.Vector.magnitude(game.space.gravity);
+      const g = Matter.Vector.magnitude(game.engine.gravity);
       let thrust = rocket.mass * g;
       thrust -= rocket.mass * velocity.y;
       thrust *= Math.min(1.0 / Math.abs(Math.cos(engine.angle - angle)), 2);
@@ -121,11 +115,11 @@ export class Autopilot extends Pilot {
       const h = position.y - rocket.h / 1.9;
       const v = velocity.y;
       const m = rocket.mass;
-      const g = Matter.Vector.magnitude(game.space.gravity);
+      const g = Matter.Vector.magnitude(game.engine.gravity);
 
       let thrust = (2 * v * v * m) / h + g;
       thrust *= Math.min(1.0 / Math.abs(Math.cos(engine.angle - angle)), 4);
-      thrust *= 0.75;
+      thrust *= 0.0075;
 
       if (v > 0 || thrust < engine.MIN_THRUST) {
         engine.cut_off();

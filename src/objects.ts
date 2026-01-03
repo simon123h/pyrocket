@@ -131,7 +131,7 @@ export class Poly extends GameObject {
     // Matter.Bodies.fromVertices needs the points to be centered
     this.body = Matter.Bodies.fromVertices(x, y, [points], {
       mass: mass,
-      friction: 0.0, // TODO: reenable friction at some point
+      friction: 0.1, // TODO: reenable friction at some point
     });
     if (!this.body) {
       console.warn("Matter.Bodies.fromVertices failed, falling back to rectangle. This will cause incorrect physics!");

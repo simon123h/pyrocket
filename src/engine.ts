@@ -6,8 +6,8 @@ import { Game } from "./objects";
  */
 export class Engine {
   ignited: boolean = false;
-  readonly MAX_THRUST: number = 3.6e5;
-  readonly MIN_THRUST: number = 3.6e4;
+  readonly MAX_THRUST: number = 1e5;
+  readonly MIN_THRUST: number = 1e4;
   readonly MAX_THRUST_CHANGE: number = 1e4;
   thrust: number = this.MAX_THRUST;
   readonly FUEL_CONSUMPTION: number = 1;
@@ -36,6 +36,7 @@ export class Engine {
   }
 
   set_angle(angle: number): void {
+    console.log(angle, this.MAX_ANGLE);
     angle = Math.min(angle, this.angle + this.MAX_ANGLE_CHANGE);
     angle = Math.max(angle, this.angle - this.MAX_ANGLE_CHANGE);
     angle = Math.min(angle, this.MAX_ANGLE);
@@ -61,15 +62,12 @@ export class Engine {
     }
 
     const ll = 0.2 * Math.sqrt(this.thrust / 3e1);
-    const angle = global_angle - this.angle;
+    const angle = this.angle - global_angle;
     const p1 = game.pos2screen(pos);
 
     game.ctx.save();
     game.ctx.translate(p1.x, p1.y);
-    game.ctx.rotate(angle); // Pygame's rotozoom uses degrees and different convention, let's adjust
-    // Pygame global_angle - self.angle.
-    // In Pygame, angle 0 is UP. In Canvas, angle 0 is RIGHT.
-    // Also Pygame Y is down, but we are using pos2screen which handles it.
+    game.ctx.rotate(angle);
 
     // The flame image in pygame was blitted at (w/2, h) in a 2w x 2h surface.
     // This suggests the origin of rotation is at the top center of the flame.
