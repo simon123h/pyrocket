@@ -1,9 +1,5 @@
 __pycache__
 .vscode
-out
-*.png
-*.mp4
-!sample.png
 
 node_modules
 dist
